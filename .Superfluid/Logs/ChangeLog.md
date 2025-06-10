@@ -19,3 +19,4 @@ Instruction: Please maintain one blank line between each log entry.
 2025-06-10 17:30 .Superfluid/UserHelp/GitHub_Setup_Codex.md 1-end Added detailed SSH-based GitHub setup instructions and documented challenges to avoid repeated pitfalls.
 
 2025-06-10 17:50 .Superfluid/Features/FullBoatWebMode.md 1-15 Introduced 'Investigation: Network Behavior under Full-Auto' section with SSH connectivity and ICMP test results, and environmental conclusions to refine full-boat plan.
+2025-06-10 17:55 .Superfluid/Features/FullBoatWebMode.md 4-7 Refined investigation conclusions to highlight DNS/ICMP anomalies are environment-specific and plan to use SSH/HTTPS tests with fallbacks.

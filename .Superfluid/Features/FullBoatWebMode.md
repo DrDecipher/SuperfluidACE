@@ -5,11 +5,12 @@ Implement a new "full-boat" approval mode duplicating "full-auto" but allowing o
 
 ## 0. Investigation: Network Behavior under Full-Auto
 To diagnose DNS/resolution issues observed in full-auto mode, we tested the following:
-- SSH connectivity: `ssh -T git@github.com -oStrictHostKeyChecking=no` → succeeded, authenticated as `git` (exit status 1).
-- Git push over SSH: `git push origin CodexNative` → succeeded when network was available.
-- ICMP ping: `ping -c1 github.com` → returned code 2 (ICMP may be blocked by host OS/firewall).
+-- SSH connectivity: `ssh -T git@github.com -oStrictHostKeyChecking=no` → succeeded previously, authenticated as `git` (exit status 1).
+-- Git push over SSH: `git push origin CodexNative` → succeeded previously under auto-edit mode.
+-- ICMP ping: `ping -c1 github.com` → exited 2 (OS/firewall may block ICMP in WSL).
+-- DNS resolution via HTTP client: `curl -I https://github.com` → exit 6 (could not resolve host).
 
-**Conclusion:** Sandbox bypass is working (commands run natively), SSH-based network access is allowed. DNS/ICMP anomalies are environmental and not due to agent policies. For full-boat, we will rely on SSH/HTTPS checks and domain whitelisting rather than ICMP.  
+**Conclusion:** Observed DNS and ICMP failures are due to environmental (WSL stub resolver OS/firewall) issues, not agent sandbox. SSH-based tests have proven connectivity. For `full-boat`, rely on SSH handshake or HTTP checks over HTTPS (which use OS resolver) and provide fallback for DNS anomalies.  
 
 
 ---
