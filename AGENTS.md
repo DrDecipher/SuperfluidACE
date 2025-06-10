@@ -1,3 +1,8 @@
+# Session Environment
+- Host OS: Windows 10/11 via WSL2.
+- Shell: Powershell launching into WSL.
+- All changes must remain compatible with native Linux environments; avoid breaking Linux workflows.
+
 # Rust/codex-rs
 
 In the codex-rs folder where the rust code lives:
