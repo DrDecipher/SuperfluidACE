@@ -15,3 +15,5 @@ Instruction: Please maintain one blank line between each log entry.
 2025-06-10 16:45 .husky/pre-commit 1-2 Replaced chained `pnpm lint-staged` hook with a portable shell script invocation (`pre-commit-checks.sh`) for cross-platform pre-commit checks.
 
 2025-06-10 16:45 .husky/pre-commit-checks.sh 1-5 Added `corepack enable` and explicit `pnpm run lint` + `pnpm run typecheck` steps to ensure consistent lint/typecheck across Windows, WSL, and Linux.
+
+2025-06-10 17:30 .Superfluid/UserHelp/GitHub_Setup_Codex.md 1-end Added detailed SSH-based GitHub setup instructions and documented challenges to avoid repeated pitfalls.
