@@ -3,6 +3,15 @@
 **Purpose:**
 Implement a new "full-boat" approval mode duplicating "full-auto" but allowing only whitelisted network access (e.g., github.com), with full surfacing in UI/CLI/config, enforcement, and robust test protocol.
 
+## 0. Investigation: Network Behavior under Full-Auto
+To diagnose DNS/resolution issues observed in full-auto mode, we tested the following:
+- SSH connectivity: `ssh -T git@github.com -oStrictHostKeyChecking=no` → succeeded, authenticated as `git` (exit status 1).
+- Git push over SSH: `git push origin CodexNative` → succeeded when network was available.
+- ICMP ping: `ping -c1 github.com` → returned code 2 (ICMP may be blocked by host OS/firewall).
+
+**Conclusion:** Sandbox bypass is working (commands run natively), SSH-based network access is allowed. DNS/ICMP anomalies are environmental and not due to agent policies. For full-boat, we will rely on SSH/HTTPS checks and domain whitelisting rather than ICMP.  
+
+
 ---
 
 ## Step-by-Step Implementation Plan
