@@ -37,3 +37,19 @@ Notes: Updated AGENTS.md with ActiveFeature directive for context restoration.
 Next Actions: Ensure agent reads ActiveFeature on startup to load this context.
 Branch/Commit: CodexNative @ 3c52bed
 ```
+
+```
+2025-06-11 12:00
+ActiveFeature: FullBoatWebMode
+Notes: Confirmed ActiveFeature directive placement in AGENTS.md under On Save section.
+Next Actions: Validate agent reads AGENTS.md ActiveFeature on startup in next session.
+Branch/Commit: CodexNative @ f8100e4
+```
+
+```
+2025-06-11 11:20
+ActiveFeature: FullBoatWebMode
+Notes: Updated AGENTS.md with ActiveFeature directive for context restoration.
+Next Actions: Ensure agent reads ActiveFeature on startup to load this context.
+Branch/Commit: CodexNative @ 3c52bed
+```
