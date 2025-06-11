@@ -22,3 +22,5 @@ Instruction: Please maintain one blank line between each log entry.
 2025-06-10 17:55 .Superfluid/Features/FullBoatWebMode/FullBoatWebMode_Plan.md 4-7 Refined investigation conclusions to highlight DNS/ICMP anomalies are environment-specific and plan to use SSH/HTTPS tests with fallbacks.
 
 2025-06-11 09:00 .Superfluid/Features/FullBoatWebMode/FullBoatWebMode_Log.md 1-end Added feature log template for FullBoatWebMode to track step progress and statuses.
+
+2025-06-11 10:00 .Superfluid/Features/FullBoatWebMode/FullBoatWebMode_Plan.md 0-8 Added 'Files Changed' and 'Validation' fields under each step for structured progress tracking and tailored test procedures.
