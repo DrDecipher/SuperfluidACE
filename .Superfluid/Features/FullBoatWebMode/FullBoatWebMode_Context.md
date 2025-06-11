@@ -1,0 +1,23 @@
+<!-- SF> 2025-06-11 11:00 | Created context log template for FullBoatWebMode feature -->
+# FullBoatWebMode Session Context
+
+This file captures the active session context for the **FullBoatWebMode** feature.
+When you need to pause development and resume in a new session, append the following:
+- **Timestamp:** YYYY-MM-DD HH:mm
+- **Current Step:** Which plan step you are on (e.g., Step 4: Network Whitelist Enforcement).
+- **Notes:** Brief summary of what was completed or observed.
+- **Next Actions:** What to begin in the next session (e.g., implement CLI argument parsing).
+- **Branch/Commit:** Current Git branch and commit hash.
+
+### Context Entry Example
+```
+2025-06-11 11:00
+Current Step: Step 2 (CLI Arguments)
+Notes: Added `--approval-mode full-boat` to help text.
+Next Actions: Update `cli.tsx` to route `full-boat` flag into agent config.
+Branch/Commit: CodexNative @ abc1234
+```
+
+---
+
+<Append new context entries here at the end of the file>
