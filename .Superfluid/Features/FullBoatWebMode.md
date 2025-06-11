@@ -52,8 +52,7 @@ In the CLI agent (TypeScript) layer, bypass OS sandbox for network calls and imp
 - **Fallback for DNS anomalies**: if DNS resolution fails (e.g. WSL stub resolver), allow explicit SSH handshake success or cached resolution as a permit for `github.com`.
 
 ### 5. Config: Whitelist Specification
-- In `utils/config.ts` (and/or CLI options):
-    - Add config file/CLI arg/context to allow end users to specify/extend network whitelist for full-boat (default: github.com)
+  - Add config file/CLI arg/context to allow end users to specify/extend network whitelist for full-boat (default: [`github.com`, `api.openai.com`])
     - Ensure config is read into session and accessible to enforcement layer.
 
 ### 6. Documentation, Help, and Discovery
