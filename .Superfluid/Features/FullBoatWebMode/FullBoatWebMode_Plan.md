@@ -11,6 +11,7 @@ Implement a new "full-boat" approval mode duplicating "full-auto" but allowing o
 
 
 ## 0. Investigation: Network Behavior under Full-Auto
+Status: Not Started
 To diagnose DNS/resolution issues observed in full-auto mode, we tested the following:
 -- SSH connectivity: `ssh -T git@github.com -oStrictHostKeyChecking=no` → succeeded previously, authenticated as `git` (exit status 1).
 -- Git push over SSH: `git push origin CodexNative` → succeeded previously under auto-edit mode.
@@ -25,16 +26,19 @@ To diagnose DNS/resolution issues observed in full-auto mode, we tested the foll
 ## Step-by-Step Implementation Plan
 
 ### 1. Add Mode to Enums and Type Definitions
+Status: Not Started
 - Extend `AutoApprovalMode` in `utils/auto-approval-mode.ts`: add `FULL_BOAT = "full-boat"`.
 - Update `ApprovalPolicy` in `approvals.ts` to allow 'full-boat' everywhere.
 - In all relevant places (type unions, switches), add 'full-boat' option; ensure no missing branch errors.
 
 ### 2. Update CLI Arguments and Mode Handling
+Status: Not Started
 - In `cli.tsx`:
     - Add 'full-boat' to `--approval-mode` valid argument values and help text.
     - Amend CLI flags and config reading so 'full-boat' is routed correctly into agent logic, just like 'full-auto'.
 
 ### 3. UI/UX and User Guidance
+Status: Not Started
 - Update `components/approval-mode-overlay.tsx`, `onboarding/onboarding-approval-mode.tsx`, and related overlays/menus:
     - Add 'full-boat' as an approval mode option to selectors.
     - Describe distinguishing features and rationale ("allows only approved network sites (e.g., github.com)").
@@ -42,6 +46,7 @@ To diagnose DNS/resolution issues observed in full-auto mode, we tested the foll
     - Colors/symbols: If needed, assign 'full-boat' a distinct style for clarity.
 
 ### 4. Network Whitelist Enforcement
+Status: Not Started
 In the CLI agent (TypeScript) layer, bypass OS sandbox for network calls and implement whitelist enforcement:
 - **Bypass sandbox**: in `handle-exec-command.ts`’s `getSandbox(runInSandbox)` detect `full-boat` mode and return `SandboxType.NONE` so network syscalls are allowed by the OS.
 - **Pre-flight whitelist check**: in `exec()` (or wrapper) inspect command arguments for network operations:
@@ -52,14 +57,17 @@ In the CLI agent (TypeScript) layer, bypass OS sandbox for network calls and imp
 - **Fallback for DNS anomalies**: if DNS resolution fails (e.g. WSL stub resolver), allow explicit SSH handshake success or cached resolution as a permit for `github.com`.
 
 ### 5. Config: Whitelist Specification
+Status: Not Started
   - Add config file/CLI arg/context to allow end users to specify/extend network whitelist for full-boat (default: [`github.com`, `api.openai.com`])
     - Ensure config is read into session and accessible to enforcement layer.
 
 ### 6. Documentation, Help, and Discovery
+Status: Not Started
 - Update all overlays/menus/help interfaces that describe available approval modes to mention full-boat and how it differs from full-auto.
 - Document CLI options and config variables in usage and README.
 
 ### 7. Test and Validate
+Status: Not Started
 #### a. **Unit Testing**
 - Write switch/branch coverage tests in all places that now gate on approval mode (enums, overlays, CLI arger parsers, etc).
 - Add tests for domain matching (case, URL, subdomain edge cases).
@@ -83,6 +91,7 @@ In the CLI agent (TypeScript) layer, bypass OS sandbox for network calls and imp
 - Try to switch between modes, saving/resuming session, to confirm consistent logic
 
 ### 8. Maintenance & Future Proofing
+Status: Not Started
 - All new branches/features have clear code comments for how whitelist and enforcement interact
 - Code/logic for whitelist is reusable if new approval/network modes are added
 - All config and session files are forward/backward compatible for rolling upgrades
