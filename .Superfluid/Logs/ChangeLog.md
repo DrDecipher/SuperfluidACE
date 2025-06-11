@@ -28,3 +28,5 @@ Instruction: Please maintain one blank line between each log entry.
 2025-06-11 10:15 .Superfluid/Features/FullBoatWebMode/FullBoatWebMode_Learn.md 1-end Created learning log template to record bugs, resolution attempts, and lessons learned for FullBoatWebMode.
 
 2025-06-11 10:45 .Superfluid/Features/Feature_Template.md 1-end Added `Feature_Template.md` as a universal feature development template, including plan, log, and learning scaffolds.
+
+2025-06-11 10:50 .Superfluid/Features/Feature_Template.md 20-28 Clarified Feature Change Log section to differentiate feature-specific `<FeatureName>_Log.md` versus global `.Superfluid/Logs/ChangeLog.md` usage.
