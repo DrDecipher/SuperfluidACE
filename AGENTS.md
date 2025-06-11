@@ -69,8 +69,19 @@ i d not think yo
 #include .Superfluid/Personalities/Jarvis.md
 #include .Superfluid/Config/CommentGuide.md
 
-## Feature Context Restoration
-- On startup, scan `.Superfluid/Features/` for any subfolder containing a file matching `*_Context.md`.
-- For each context file found, load its contents as the active session context.
-- Automatically also load the corresponding `<FeatureName>_Plan.md`, `<FeatureName>_Log.md`, and `<FeatureName>_Learn.md` from the same folder to rehydrate the feature state.
-- Resume processing from the recorded `Current Step` and use `Next Actions` as the entry point for the new session.
+### On Startup: Feature Context Restoration
+1. Read the `ActiveFeature: <FeatureName>` directive in this file (if present) to determine the feature to resume.
+2. If no `ActiveFeature` is set, scan `.Superfluid/Features/` subdirectories for any `*_Context.md` files and select the one matching the desired feature.
+3. For the chosen `<FeatureName>`, load:
+   - `<FeatureName>_Context.md` (session context)
+   - `<FeatureName>_Plan.md` (implementation plan)
+   - `<FeatureName>_Log.md` (feature change log)
+   - `<FeatureName>_Learn.md` (learning log)
+4. Resume processing at the recorded **Current Step** and follow **Next Actions**.
+
+### On Save: Active Feature Tracking
+- After writing to `<FeatureName>_Context.md` or `<FeatureName>_Log.md`, update this file to set:
+  ```
+  ActiveFeature: <FeatureName>
+  ```
+- This ensures the agent knows which feature and context to load for subsequent sessions.
