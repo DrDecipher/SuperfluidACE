@@ -30,6 +30,7 @@ Instruction: Please maintain one blank line between each log entry.
 2025-06-11 10:45 .Superfluid/Features/Feature_Template.md 1-end Added `Feature_Template.md` as a universal feature development template, including plan, log, and learning scaffolds.
 
 2025-06-11 11:30 AGENTS.md 42-47 Added 'Feature Context Restoration' instructions to automatically load feature context and related files on startup.
+2025-06-11 11:45 AGENTS.md 48-53 Added 'Active Feature Tracking' instructions to update AGENTS.md with the current active feature and load its context on startup.
 2025-06-11 11:00 .Superfluid/Features/FullBoatWebMode/FullBoatWebMode_Context.md 1-end Created context log template to record session context and next actions for FullBoatWebMode.
 
 2025-06-11 11:15 .Superfluid/Features/FullBoatWebMode/FullBoatWebMode_Context.md 7-13 Recorded initial session context entry capturing current step, notes, next actions, and commit.
