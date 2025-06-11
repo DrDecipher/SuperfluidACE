@@ -68,3 +68,9 @@ i d not think yo
 # Project Agent Instructions
 #include .Superfluid/Personalities/Jarvis.md
 #include .Superfluid/Config/CommentGuide.md
+
+## Feature Context Restoration
+- On startup, scan `.Superfluid/Features/` for any subfolder containing a file matching `*_Context.md`.
+- For each context file found, load its contents as the active session context.
+- Automatically also load the corresponding `<FeatureName>_Plan.md`, `<FeatureName>_Log.md`, and `<FeatureName>_Learn.md` from the same folder to rehydrate the feature state.
+- Resume processing from the recorded `Current Step` and use `Next Actions` as the entry point for the new session.
