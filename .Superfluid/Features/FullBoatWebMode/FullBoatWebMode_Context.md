@@ -22,10 +22,18 @@ Branch/Commit: CodexNative @ abc1234
 
 <Append new context entries here at the end of the file>
 
-``` 
+```
 2025-06-11 11:15
 Current Step: Step 1 (Add Mode to Enums and Type Definitions)
 Notes: Completed scaffolding of feature templates, plan, log, learn, and context templates.
 Next Actions: Begin implementing `FULL_BOAT` enum in `auto-approval-mode.ts` and update `approvals.ts`.
 Branch/Commit: CodexNative @ e3127bb
+```
+
+```
+2025-06-11 11:20
+ActiveFeature: FullBoatWebMode
+Notes: Updated AGENTS.md with ActiveFeature directive for context restoration.
+Next Actions: Ensure agent reads ActiveFeature on startup to load this context.
+Branch/Commit: CodexNative @ 3c52bed
 ```
