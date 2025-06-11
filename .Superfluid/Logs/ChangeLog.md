@@ -24,3 +24,5 @@ Instruction: Please maintain one blank line between each log entry.
 2025-06-11 09:00 .Superfluid/Features/FullBoatWebMode/FullBoatWebMode_Log.md 1-end Added feature log template for FullBoatWebMode to track step progress and statuses.
 
 2025-06-11 10:00 .Superfluid/Features/FullBoatWebMode/FullBoatWebMode_Plan.md 0-8 Added 'Files Changed' and 'Validation' fields under each step for structured progress tracking and tailored test procedures.
+
+2025-06-11 10:15 .Superfluid/Features/FullBoatWebMode/FullBoatWebMode_Learn.md 1-end Created learning log template to record bugs, resolution attempts, and lessons learned for FullBoatWebMode.
