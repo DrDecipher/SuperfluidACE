@@ -3,6 +3,13 @@
 **Purpose:**
 Implement a new "full-boat" approval mode duplicating "full-auto" but allowing only whitelisted network access (e.g., github.com), with full surfacing in UI/CLI/config, enforcement, and robust test protocol.
 
+### Preliminary Research & Constraints
+- Full-auto runs under macOS Seatbelt or Linux Landlock (or equivalent) which disables all outbound network (DNS resolution, TCP/UDP sockets, ICMP). It is by design and not a bug.
+- WSL stub resolver can exhibit DNS/ICMP failures independent of sandbox policy; SSH handshakes have succeeded in auto-edit mode but not under full-auto network policies.
+- Rust `codex-rs` binary uses `CODEX_SANDBOX_NETWORK_DISABLED` env var and cannot be modified due to AGENTS.md directive. All whitelist logic must live in the CLI/TypeScript agent layer.
+- To allow selective network in full-boat, we will bypass the OS sandbox (SandboxType.NONE) for network calls and implement host/domain checks in the CLI before command execution.
+
+
 ## 0. Investigation: Network Behavior under Full-Auto
 To diagnose DNS/resolution issues observed in full-auto mode, we tested the following:
 -- SSH connectivity: `ssh -T git@github.com -oStrictHostKeyChecking=no` → succeeded previously, authenticated as `git` (exit status 1).
@@ -35,15 +42,14 @@ To diagnose DNS/resolution issues observed in full-auto mode, we tested the foll
     - Colors/symbols: If needed, assign 'full-boat' a distinct style for clarity.
 
 ### 4. Network Whitelist Enforcement
-- In `agent/exec.ts` and `agent/handle-exec-command.ts`, and under `sandbox/*` if enforcing at native level:
-    - Add logic to check the current approval mode: If 'full-boat', sandbox/exec or network policy must allow only the approved domains.
-    - Implement/check domain whitelist; block all other outbound network.
-        - Recommend starting with a policy/config variable, e.g. `ALLOWED_DOMAINS = ["github.com"]`, which can be extended/configured by the user.
-    - Enforce this by:
-        - Preferably: system sandbox support for network rules (requires per-OS extension; see Landlock/seatbelt docs)
-        - Alternately: pre-flight agent check—resolve requested URLs/hosts before command execution, only allow if whitelisted.
-        - Fallback: if unable to enforce, show a warning/reject command with correct user feedback
-    - Update handling of `CODEX_SANDBOX_NETWORK_DISABLED` or equivalent env handling/mechanisms.
+In the CLI agent (TypeScript) layer, bypass OS sandbox for network calls and implement whitelist enforcement:
+- **Bypass sandbox**: in `handle-exec-command.ts`’s `getSandbox(runInSandbox)` detect `full-boat` mode and return `SandboxType.NONE` so network syscalls are allowed by the OS.
+- **Pre-flight whitelist check**: in `exec()` (or wrapper) inspect command arguments for network operations:
+    - Parse URLs (e.g. in `curl`, `wget`, `git clone/push` remote URLs, `ssh`, `npm install`) to extract hostnames.
+    - Compare hostnames against a config-driven whitelist (default `['github.com']`).
+    - On any non-whitelisted host, abort execution and surface a clear error or warning to the user.
+- **Whitelist configuration**: allow end-users to extend domains via CLI flag or config file (see Step 5).
+- **Fallback for DNS anomalies**: if DNS resolution fails (e.g. WSL stub resolver), allow explicit SSH handshake success or cached resolution as a permit for `github.com`.
 
 ### 5. Config: Whitelist Specification
 - In `utils/config.ts` (and/or CLI options):
@@ -81,6 +87,13 @@ To diagnose DNS/resolution issues observed in full-auto mode, we tested the foll
 - All new branches/features have clear code comments for how whitelist and enforcement interact
 - Code/logic for whitelist is reusable if new approval/network modes are added
 - All config and session files are forward/backward compatible for rolling upgrades
+### Edge Cases & Limitations
+- **Heuristic parsing:** detecting network operations by parsing CLI arguments may miss custom binaries or low-level socket calls.
+- **IP address usage:** commands targeting raw IPs will bypass host-based whitelist; consider extending config to allow IP ranges.
+- **Subdomain patterns:** explicit rules needed for common variants (`api.github.com`, `raw.githubusercontent.com`).
+- **HTTPS vs SSH:** SSH endpoints rely on key-based auth; HTTP clients may still require DNS resolution which can vary in WSL stub environments.
+- **OS sandbox conflicts:** bypassing Seatbelt/Landlock means losing filesystem confinement; we must trust CLI enforcement fully.
+- **Rust binary limitations:** cannot relax `CODEX_SANDBOX_NETWORK_DISABLED` in `codex-rs`; full-boat logic only applies to CLI-run tools, not the Rust host process.
 
 ---
 
