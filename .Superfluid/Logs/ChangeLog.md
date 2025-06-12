@@ -33,6 +33,7 @@ Instruction: Please maintain one blank line between each log entry.
 2025-06-11 11:45 AGENTS.md 48-53 Added 'Active Feature Tracking' instructions to update AGENTS.md with the current active feature and load its context on startup.
 2025-06-11 11:50 AGENTS.md 70-79 Refactored context restoration and active feature tracking into structured 'On Startup' and 'On Save' sections for clarity.
 
+2025-06-11 12:30 .Superfluid/Features/Feature_Template.md  Fifty-something Added instruction under 'Review & Commit' to only push after user-confirmed validation of each step.
 2025-06-11 12:00 .Superfluid/Features/FullBoatWebMode/FullBoatWebMode_Context.md 14-19 Added context entry confirming ActiveFeature directive placement and next actions.
 
 2025-06-11 11:20 .Superfluid/Features/FullBoatWebMode/FullBoatWebMode_Context.md 14-19 Saved session context entry with ActiveFeature directive and next actions for FullBoatWebMode.
