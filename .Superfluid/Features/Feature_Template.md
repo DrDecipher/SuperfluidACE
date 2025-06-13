@@ -13,6 +13,10 @@ Copy this file into a new folder named after the feature, and save it as `Featur
   - `Feature_Template.md` → `<FeatureName>_Learn.md` (learning log)
   - `Feature_Template.md` → `<FeatureName>_Context.md` (session context)
 
+
+### Context File Add-on <!-- SF> 2025-06-13 16:40 | Added guidance to embed conversation logs when saving context -->
+Each time a session is paused, append a context entry **plus** a collapsible block containing the **full chat transcript for that session**.  See **Session Save Workflow** in `AGENTS.md` for exact formatting and size-management tips.
+
 ## 2. Plan Document (`<FeatureName>_Plan.md`)
 1. **Purpose:** Describe feature goal and motivation.
 2. **Preliminary Research & Constraints:** List sandbox, environment, or codebase constraints.

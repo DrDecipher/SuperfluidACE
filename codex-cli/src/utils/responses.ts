@@ -255,8 +255,9 @@ function convertTools(
       type: "function" as const,
       function: {
         name: tool.name,
-        description: tool.description || undefined,
-        parameters: tool.parameters,
+        description: tool.description ?? undefined,
+        // SF> 2025-06-13 17:35 | Convert null parameters to undefined to satisfy ChatCompletionTool typing.
+        parameters: tool.parameters ?? undefined,
       },
     }));
 }

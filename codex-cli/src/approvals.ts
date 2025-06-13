@@ -42,7 +42,7 @@ export type ApplyPatchCommand = {
   patch: string;
 };
 
-export type ApprovalPolicy =
+export type ApprovalPolicy = // SF> 2025-06-13 12:10 | Extended type union to include 'full-boat' for FullBoatWebMode implementation.
   /**
    * Under this policy, only "known safe" commands as defined by
    * `isSafeCommand()` that only read files will be auto-approved.
@@ -61,7 +61,11 @@ export type ApprovalPolicy =
    * where network access is disabled and writes are limited to a specific set
    * of paths.
    */
-  | "full-auto";
+  | "full-auto"
+  /**
+   * Same as full-auto but with network whitelist enforcement ("full-boat" mode).
+   */
+  | "full-boat";
 
 /**
  * Tries to assess whether a command is safe to run, though may defer to the
@@ -119,7 +123,11 @@ export function canAutoApprove(
       // In practice, there seem to be syntactically valid shell commands that
       // shell-quote cannot parse, so we should not reject, but ask the user.
       switch (policy) {
+        // fallthrough handled – "full-boat" uses same logic as "full-auto"
         case "full-auto":
+        // SF> 2025-06-13 12:10 | Treat 'full-boat' same as 'full-auto' for Step 1 until whitelist enforcement added.
+        /* falls through */
+        case "full-boat":
           // In full-auto, we still run the command automatically, but must
           // restrict it to the sandbox.
           return {
@@ -156,7 +164,8 @@ export function canAutoApprove(
     }
   }
 
-  return policy === "full-auto"
+  // SF> 2025-06-13 12:10 | Allow auto-approval logic when policy is 'full-boat', mirroring behaviour of 'full-auto'.
+  return policy === "full-auto" || policy === "full-boat"
     ? {
         type: "auto-approve",
         reason: "Full auto mode",
@@ -173,7 +182,11 @@ function canAutoApproveApplyPatch(
   policy: ApprovalPolicy,
 ): SafetyAssessment {
   switch (policy) {
+    // fallthrough handled – "full-boat" shares logic with "full-auto"
     case "full-auto":
+    // SF> 2025-06-13 12:10 | Include 'full-boat' path identical to 'full-auto'.
+    /* falls through */
+    case "full-boat":
       // Continue to see if this can be auto-approved.
       break;
     case "suggest":
@@ -202,7 +215,8 @@ function canAutoApproveApplyPatch(
     };
   }
 
-  return policy === "full-auto"
+  // SF> 2025-06-13 12:10 | Include 'full-boat' auto-approval equivalence.
+  return policy === "full-auto" || policy === "full-boat"
     ? {
         type: "auto-approve",
         reason: "Full auto mode",

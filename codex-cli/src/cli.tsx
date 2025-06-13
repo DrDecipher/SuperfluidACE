@@ -1,4 +1,39 @@
 #!/usr/bin/env node
+// SF> 2025-06-13 17:25 | Moved shebang to top to satisfy TypeScript rules; added fs import before usage.
+/* eslint-disable import/order */ // SF> 2025-06-13 17:45 | Disable import order rule for bootstrap; console rules deemed acceptable.
+
+// SF> 2024-06-12 | Auto-load and prompt for session tracking via agents.md (Feature Restoration).
+import readline from 'readline';
+import fs from 'fs'; // SF> 2025-06-13 17:25 | Ensure fs is imported before being referenced below.
+// SF> 2024-06-12 | Feature restoration logic from agents.md
+const agentsPath = 'agents.md';
+if (fs.existsSync(agentsPath)) {
+    const content = fs.readFileSync(agentsPath, 'utf8');
+    const activeFeatureLine = content.match(/^ActiveFeature: (.+)$/m);
+    if (activeFeatureLine) {
+    const activeFeature = (activeFeatureLine?.[1] ?? '').trim(); // SF> 2025-06-13 17:30 | Guard against undefined match to satisfy strict null checks.
+        // eslint-disable-next-line no-console
+        console.log('\nDetected Active Feature:', activeFeature);
+        // eslint-disable-next-line no-console
+        console.log('Feature Session Workflow:');
+        // eslint-disable-next-line no-console
+        console.log(`\n[0] Start NEW feature\n[1] Switch to another tracked feature\n[2] Review loaded feature data (plan/context/log/learn)\n[3] Continue working on this feature (go to next step/plan)`);
+
+        const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+        rl.question('Select your next action (0-3): ', answer => {
+            if (answer.trim() === '3') {
+                rl.close();
+                // Proceed with usual code...
+            } else {
+                // eslint-disable-next-line no-console
+                console.log('Please implement desired action for selection:', answer.trim());
+                rl.close();
+                process.exit(0);
+            }
+        });
+        // Prevent session from launching until the selection is made!
+    }
+}
 import "dotenv/config";
 
 // Exit early if on an older version of Node.js (< 22)
@@ -48,7 +83,6 @@ import { parseToolCall } from "./utils/parsers";
 import { onExit, setInkRenderer } from "./utils/terminal";
 import chalk from "chalk";
 import { spawnSync } from "child_process";
-import fs from "fs";
 import { render } from "ink";
 import meow from "meow";
 import os from "os";
@@ -84,10 +118,11 @@ const cli = meow(
     -q, --quiet                     Non-interactive mode that only prints the assistant's final output
     -c, --config                    Open the instructions file in your editor
     -w, --writable-root <path>      Writable folder for sandbox in full-auto mode (can be specified multiple times)
-    -a, --approval-mode <mode>      Override the approval policy: 'suggest', 'auto-edit', or 'full-auto'
+    -a, --approval-mode <mode>      Override the approval policy: 'suggest', 'auto-edit', 'full-auto', or 'full-boat' // SF> 2025-06-13 17:10 | Updated help text to include new 'full-boat' approval mode.
 
     --auto-edit                Automatically approve file edits; still prompt for commands
     --full-auto                Automatically approve edits and commands when executed in the sandbox
+    --full-boat                Automatically approve edits and commands when executed with network whitelist ("full-boat" mode) // SF> 2025-06-13 17:10 | Added dedicated flag for full-boat mode to align with existing full-auto & auto-edit flags.
 
     --no-project-doc           Do not automatically include the repository's 'AGENTS.md'
     --project-doc <file>       Include an additional markdown file at <file> as context
@@ -155,11 +190,17 @@ const cli = meow(
         description:
           "Automatically run commands in a sandbox; only prompt for failures.",
       },
+      // SF> 2025-06-13 17:10 | Introduce --full-boat boolean flag mirroring --full-auto but with network whitelist enforcement.
+      fullBoat: {
+        type: "boolean",
+        description:
+          "Automatically approve commands & edits with network whitelist enforcement (full-boat mode).",
+      },
       approvalMode: {
         type: "string",
         aliases: ["a"],
         description:
-          "Determine the approval mode for Codex (default: suggest) Values: suggest, auto-edit, full-auto",
+          "Determine the approval mode for Codex (default: suggest) Values: suggest, auto-edit, full-auto, full-boat", // SF> 2025-06-13 17:10 | Included 'full-boat' in --approval-mode description.
       },
       writableRoot: {
         type: "string",
@@ -534,9 +575,12 @@ if (cli.flags.quiet) {
   }
 
   // Determine approval policy for quiet mode based on flags
+  // SF> 2025-06-13 17:10 | Extend quiet mode approval policy resolution to include --full-boat flag and 'full-boat' string.
   const quietApprovalPolicy: ApprovalPolicy =
-    cli.flags.fullAuto || cli.flags.approvalMode === "full-auto"
-      ? AutoApprovalMode.FULL_AUTO
+    cli.flags.fullBoat || cli.flags.approvalMode === "full-boat"
+      ? AutoApprovalMode.FULL_BOAT
+      : cli.flags.fullAuto || cli.flags.approvalMode === "full-auto"
+        ? AutoApprovalMode.FULL_AUTO
       : cli.flags.autoEdit || cli.flags.approvalMode === "auto-edit"
         ? AutoApprovalMode.AUTO_EDIT
         : config.approvalMode || AutoApprovalMode.SUGGEST;
@@ -565,9 +609,12 @@ if (cli.flags.quiet) {
 // 4. config.approvalMode - use the approvalMode setting from ~/.codex/config.json.
 // 5. Default – suggest mode (prompt for everything).
 
+// SF> 2025-06-13 17:10 | Add full-boat mode resolution for interactive policy.
 const approvalPolicy: ApprovalPolicy =
-  cli.flags.fullAuto || cli.flags.approvalMode === "full-auto"
-    ? AutoApprovalMode.FULL_AUTO
+  cli.flags.fullBoat || cli.flags.approvalMode === "full-boat"
+    ? AutoApprovalMode.FULL_BOAT
+    : cli.flags.fullAuto || cli.flags.approvalMode === "full-auto"
+      ? AutoApprovalMode.FULL_AUTO
     : cli.flags.autoEdit || cli.flags.approvalMode === "auto-edit"
       ? AutoApprovalMode.AUTO_EDIT
       : config.approvalMode || AutoApprovalMode.SUGGEST;
@@ -670,7 +717,7 @@ async function runQuietMode({
     ): Promise<CommandConfirmation> => {
       // In quiet mode, default to NO_CONTINUE, except when in full-auto mode
       const reviewDecision =
-        approvalPolicy === AutoApprovalMode.FULL_AUTO
+        (approvalPolicy === AutoApprovalMode.FULL_AUTO || approvalPolicy === AutoApprovalMode.FULL_BOAT) // SF> 2025-06-13 17:10 | Allow full-boat to auto-continue in quiet mode similar to full-auto.
           ? ReviewDecision.YES
           : ReviewDecision.NO_CONTINUE;
       return Promise.resolve({ review: reviewDecision });

@@ -314,8 +314,10 @@ export function loadProjectDoc(cwd: string, explicitPath?: string): string {
     for (const line of lines) {
       const includeMatch = line.match(/^\s*#include\s+(.+)$/i);
       if (includeMatch) {
+        // SF> 2025-06-13 17:35 | Guard RegExp capture for strictNullChecks.
+        const rawPath = includeMatch[1] ?? "";
         // Clean and resolve the included path
-        const incPath = includeMatch[1].trim().replace(/^<|>$/g, '');
+        const incPath = rawPath.trim().replace(/^<|>$/g, '');
         const resolved = resolvePath(currentDir, incPath);
         if (!included.has(resolved) && existsSync(resolved)) {
           included.add(resolved);
