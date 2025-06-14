@@ -28,6 +28,11 @@ export function OnboardingApprovalMode(): React.ReactElement {
               "Auto-approve file reads, edits, and running commands network-disabled",
             value: AutoApprovalMode.FULL_AUTO,
           },
+          {
+            label:
+              "Auto-approve reads & edits; run commands with whitelisted network (full-boat)", // SF> 2025-06-13 18:05 | Added full-boat option to onboarding select.
+            value: AutoApprovalMode.FULL_BOAT,
+          },
         ]}
       />
     </Box>

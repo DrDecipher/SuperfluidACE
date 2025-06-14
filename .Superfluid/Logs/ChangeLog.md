@@ -3,6 +3,8 @@
 2025-06-13 17:45 codex-cli/src/cli.tsx 10-30 Added eslint disables for no-console and import/order.
 2025-06-13 17:45 codex-cli/src/components/chat/terminal-chat-response-item.tsx 40-60 Added eslint disable directives for ts-ignore lines.
 2025-06-13 17:45 codex-cli/src/utils/agent/agent-loop.ts multiple Added eslint disable directives for ts-ignore lines.
+
+2025-06-13 17:58 AGENTS.md +90 Added troubleshooting section for Git permission errors and approval-mode workaround.
 Instruction: Please maintain one blank line between each log entry.
 
 2025-06-13 17:10 codex-cli/src/cli.tsx 110-210,185-210,560-620,600-620,700-710 Added --full-boat flag, extended help text and approval policy resolution for new 'full-boat' approval mode, ensuring quiet and interactive modes treat it similarly to full-auto.

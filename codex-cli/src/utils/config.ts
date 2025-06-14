@@ -162,6 +162,8 @@ export type StoredConfig = {
       maxLines?: number;
     };
   };
+  /** Allowed domains in full-boat mode */
+  fullBoatWhitelist?: Array<string>;
   /** User-defined safe commands */
   safeCommands?: Array<string>;
   reasoningEffort?: ReasoningEffort;
@@ -215,6 +217,8 @@ export type AppConfig = {
       maxLines: number;
     };
   };
+  /** Allowed domains for network access in full-boat mode */
+  fullBoatWhitelist?: Array<string>;
   fileOpener?: FileOpenerScheme;
 };
 

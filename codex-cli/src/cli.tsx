@@ -196,6 +196,12 @@ const cli = meow(
         description:
           "Automatically approve commands & edits with network whitelist enforcement (full-boat mode).",
       },
+      whitelistDomain: {
+        type: "string",
+        isMultiple: true,
+        description:
+          "Additional domain(s) to allow in full-boat mode (can be specified multiple times)",
+      },
       approvalMode: {
         type: "string",
         aliases: ["a"],
@@ -325,6 +331,12 @@ let config = loadConfig(undefined, undefined, {
   projectDocPath: cli.flags.projectDoc,
   isFullContext: fullContextMode,
 });
+
+// SF> 2025-06-13 18:05 | Merge CLI --whitelist-domain values into config for full-boat mode.
+if (Array.isArray(cli.flags.whitelistDomain) && cli.flags.whitelistDomain.length > 0) {
+  const unique = new Set<string>([...(config.fullBoatWhitelist ?? []), ...cli.flags.whitelistDomain]);
+  config = { ...config, fullBoatWhitelist: Array.from(unique) } as typeof config;
+}
 
 // `prompt` can be updated later when the user resumes a previous session
 // via the `--history` flag. Therefore it must be declared with `let` rather

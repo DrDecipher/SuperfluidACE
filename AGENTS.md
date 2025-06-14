@@ -131,3 +131,24 @@ i d not think yo
 # Project Agent Instructions
 #include .Superfluid/Personalities/Jarvis.md
 #include .Superfluid/Config/CommentGuide.md
+
+---
+
+## Troubleshooting – Git Commit Permission Errors <!-- SF> 2025-06-13 17:58 | Added guidance for work-tree permission issues & approval-mode workaround. -->
+
+On Windows-mounted repositories (`/mnt/c/...`) the assistant sometimes hits a
+`permission denied` error creating `.git/index.lock` or work-tree lock files
+during `git add / git commit`.  This is due to Windows ACL semantics rather
+than an agent bug.
+
+**Two quick fixes:**
+
+1. Manually stage & commit from your own shell (PowerShell/WSL) where you have
+   sufficient rights, then push.
+
+2. Temporarily switch the assistant’s **approval mode** to `approve` (i.e.
+   grant it higher privilege) and ask it to retry the commit/push.  Revert the
+   approval mode after the push succeeds.
+
+Moving the repository to a POSIX-native path (e.g. `~/projects`) permanently
+avoids this permission quirk.

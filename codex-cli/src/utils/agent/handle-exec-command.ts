@@ -13,6 +13,47 @@ import { isLoggingEnabled, log } from "../logger/log.js";
 import { SandboxType } from "./sandbox/interface.js";
 import { PATH_TO_SEATBELT_EXECUTABLE } from "./sandbox/macos-seatbelt.js";
 import fs from "fs/promises";
+import { URL } from "url"; // SF> 2025-06-13 18:05 | For hostname parsing.
+
+// ---------------------------------------------------------------------------
+// Full-Boat helper: detect network hosts in shell command arguments and return
+// the first host that is NOT on the allowed whitelist.  The heuristic focuses
+// on common tools (`curl`, `wget`, `npm`, `pnpm`, `yarn`, `git`, `ssh`).  It
+// purposefully errs on the side of *false positives*—blocking a host that the
+// user can later whitelist—rather than missing a potentially unsafe request.
+// ---------------------------------------------------------------------------
+
+export function extractFirstOffendingHost(
+  cmd: ReadonlyArray<string>,
+  allowedHosts: ReadonlyArray<string>,
+): string | null {
+  const urls: Array<string> = [];
+
+  for (const arg of cmd) {
+    // Direct URL argument (http/https/ssh-style)
+    if (/^https?:\/\//i.test(arg)) {
+      urls.push(arg);
+    }
+
+    // git@github.com:owner/repo.git style
+    const scpLike = arg.match(/^(?:\w+@)?([\w.-]+):/);
+    if (scpLike) {
+      urls.push(`ssh://${scpLike[1]}`); // fabricate URL for parsing
+    }
+  }
+
+  for (const u of urls) {
+    try {
+      const host = new URL(u).hostname.toLowerCase();
+      if (!allowedHosts.map((h) => h.toLowerCase()).includes(host)) {
+        return host;
+      }
+    } catch {
+      /* malformed URL → ignore */
+    }
+  }
+  return null;
+}
 
 // ---------------------------------------------------------------------------
 // Session‑level cache of commands that the user has chosen to always approve.
@@ -146,6 +187,26 @@ export async function handleExecCommand(
     config,
     abortSignal,
   );
+
+  // SF> 2025-06-13 18:05 | Full-Boat whitelist enforcement: if approval policy is 'full-boat', inspect command for outbound hostnames and block if not whitelisted.
+  if (policy === "full-boat") {
+    const allowedHosts: ReadonlyArray<string> =
+      Array.isArray(config.fullBoatWhitelist) && config.fullBoatWhitelist.length > 0
+        ? config.fullBoatWhitelist
+        : ["github.com", "api.openai.com"];
+
+    const offendingHost = extractFirstOffendingHost(command, allowedHosts);
+    if (offendingHost) {
+      return {
+        outputText: "aborted",
+        metadata: {
+          error: "network host not whitelisted",
+          host: offendingHost,
+          approvalPolicy: "full-boat",
+        },
+      };
+    }
+  }
   // If the operation was aborted in the meantime, propagate the cancellation
   // upward by returning an empty (no-op) result so that the agent loop will
   // exit cleanly without emitting spurious output.
