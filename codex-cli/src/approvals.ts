@@ -181,24 +181,27 @@ function canAutoApproveApplyPatch(
   writableRoots: ReadonlyArray<string>,
   policy: ApprovalPolicy,
 ): SafetyAssessment {
+  // SF> 2025-06-14 13:10 | DISABLE PATCH PATH LIMITS in 'full-auto'/'full-boat' modes: allow ANY patch for max flexibility (admin override).
   switch (policy) {
-    // fallthrough handled – "full-boat" shares logic with "full-auto"
     case "full-auto":
-    // SF> 2025-06-13 12:10 | Include 'full-boat' path identical to 'full-auto'.
-    /* falls through */
     case "full-boat":
-      // Continue to see if this can be auto-approved.
-      break;
+      return {
+        type: "auto-approve",
+        reason: "Full auto mode (no writableRoots enforcement)",
+        group: "Editing",
+        runInSandbox: true,
+        applyPatch: { patch: applyPatchArg },
+      };
     case "suggest":
       return {
         type: "ask-user",
         applyPatch: { patch: applyPatchArg },
       };
     case "auto-edit":
-      // Continue to see if this can be auto-approved.
       break;
   }
 
+  // For other modes (e.g. auto-edit), keep the old check as fallback:
   if (
     isWritePatchConstrainedToWritablePaths(
       applyPatchArg,
@@ -215,19 +218,10 @@ function canAutoApproveApplyPatch(
     };
   }
 
-  // SF> 2025-06-13 12:10 | Include 'full-boat' auto-approval equivalence.
-  return policy === "full-auto" || policy === "full-boat"
-    ? {
-        type: "auto-approve",
-        reason: "Full auto mode",
-        group: "Editing",
-        runInSandbox: true,
-        applyPatch: { patch: applyPatchArg },
-      }
-    : {
-        type: "ask-user",
-        applyPatch: { patch: applyPatchArg },
-      };
+  return {
+    type: "ask-user",
+    applyPatch: { patch: applyPatchArg },
+  };
 }
 
 /**

@@ -1,3 +1,9 @@
+2025-06-14 14:30 codex-cli/src/utils/parsers.ts 6-8 Corrected import path to format-command.js to resolve Vitest failures.
+2025-06-14 14:26 codex-cli/src/cli.tsx 200-205 Ensured log directory creation in scaffoldFeature.
+2025-06-14 14:25 codex-cli/src/cli.tsx 155-200 Added rootDir param to scaffoldFeature to avoid global cwd mutation and fix failing tests.
+2025-06-14 14:15 codex-cli/src/utils/config.ts 350-360 Added console.warn when truncating oversized project doc to restore test coverage.
+2025-06-14 13:55 codex-cli/src/cli.tsx 221-260 Extracted scaffoldFeature helper and refactored startNewFeature to use it.
+2025-06-14 13:48 codex-cli/src/cli.tsx 141-220 Implemented startNewFeature wizard scaffolding and log update.
 2025-06-13 17:45 .husky/pre-commit-checks.sh 2-5 Guarded corepack enable to prevent permission error without root.
 2025-06-13 17:45 codex-cli/src/approvals.ts 120-140,180-200 Added fallthrough comment for ESLint no-fallthrough compliance.
 2025-06-13 17:45 codex-cli/src/cli.tsx 10-30 Added eslint disables for no-console and import/order.
@@ -5,6 +11,8 @@
 2025-06-13 17:45 codex-cli/src/utils/agent/agent-loop.ts multiple Added eslint disable directives for ts-ignore lines.
 
 2025-06-13 17:58 AGENTS.md +90 Added troubleshooting section for Git permission errors and approval-mode workaround.
+
+2025-06-13 18:25 codex-cli/src/cli.tsx 25-50 Modified continue-feature flow: now displays next step from Plan and asks user to confirm with 'start' before launching.
 Instruction: Please maintain one blank line between each log entry.
 
 2025-06-13 17:10 codex-cli/src/cli.tsx 110-210,185-210,560-620,600-620,700-710 Added --full-boat flag, extended help text and approval policy resolution for new 'full-boat' approval mode, ensuring quiet and interactive modes treat it similarly to full-auto.
@@ -69,4 +77,4 @@ Instruction: Please maintain one blank line between each log entry.
 2025-06-13 16:45 .Superfluid/Features/FullBoatWebMode/FullBoatWebMode_Context.md +15 Added new session context entry with collapsible conversation log.
 2025-06-13 16:55 .Superfluid/Features/FullBoatWebMode/FullBoatWebMode_Context.md +30 Replaced placeholder log with full conversation history.
 2025-06-13 17:00 AGENTS.md 30-45 Clarified that session save must include full conversation transcript; Feature_Template updated accordingly.
-2025-06-13 17:05 .Superfluid/Features/FullBoatWebMode/FullBoatWebMode_Context.md +20 Added new context save entry with full conversation log for confirmation.
+2025-06-13 17:05 .Superfluid/Features/FullBoatWebMode/FullBoatWebMode_Context.md +20 Added new context save entry with full conversation log for confirmation.2025-06-14 13:39 codex-cli/src/approvals.ts 178-208 Disable writableRoots path enforcement for apply_patch in full-auto/full-boat (admin override: all patches allowed).

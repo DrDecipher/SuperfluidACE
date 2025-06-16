@@ -346,6 +346,14 @@ export function loadProjectDoc(cwd: string, explicitPath?: string): string {
 
   try {
     const buf = readFileSync(filepath);
+
+    // SF> 2025-06-14 14:15 | Emit warning when project doc is truncated to satisfy tests and provide user feedback.
+    if (buf.byteLength > PROJECT_DOC_MAX_BYTES) {
+      console.warn(
+        `codex: project doc exceeds ${PROJECT_DOC_MAX_BYTES} bytes – truncating to limit`,
+      );
+    }
+
     let content = buf.slice(0, PROJECT_DOC_MAX_BYTES).toString("utf-8");
     const included = new Set([filepath]);
     content = resolveIncludes(content, dirname(filepath), included);

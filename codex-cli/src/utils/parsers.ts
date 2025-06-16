@@ -5,7 +5,8 @@ import type {
 import type { ResponseFunctionToolCall } from "openai/resources/responses/responses.mjs";
 
 import { log } from "node:console";
-import { formatCommandForDisplay } from "src/format-command.js";
+// SF> 2025-06-14 14:30 | Fixed incorrect import path causing module resolution failures in tests.
+import { formatCommandForDisplay } from "../format-command.js";
 
 // The console utility import is intentionally explicit to avoid bundlers from
 // including the entire `console` module when only the `log` function is

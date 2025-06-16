@@ -105,3 +105,25 @@ Assistant: Added full conversation log.
 
 </details>
 
+
+```
+2025-06-13 18:15
+Current Step: Step 3/4 – UI & whitelist enforcement
+Notes: Implemented onboarding option for full-boat, --whitelist-domain flag, config plumbing, whitelist enforcement; added helper tests; documented git permission workaround & npm link guidance.
+Next Actions:
+  • Extend host parser for subdomains/IPs
+  • Add integration tests for allowed/blocked hosts
+  • Update README/help docs for full-boat mode
+Branch/Commit: CodexNative @ 441ec58
+```
+
+<details>
+<summary>Conversation Log 2025-06-13 18:15</summary>
+
+```text
+User: save session
+Assistant: (this entry)
+```
+
+</details>
+

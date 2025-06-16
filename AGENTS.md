@@ -1,67 +1,3 @@
-
-# =============================================
-# Feature Session Tracking & Agent Workflow
-# =============================================
-
-ActiveFeature: FullBoatWebMode
-
-## Feature Restoration Workflow
-
-
-Upon agent startup:
-  1. Read the ActiveFeature directive above.
-  2. If set, load the following feature files for that feature name:
-      - <FeatureName>_Context.md
-      - <FeatureName>_Plan.md
-      - <FeatureName>_Log.md
-      - <FeatureName>_Learn.md (if exists)
-  3. Prompt the user with these options (by number):
-      1. Start NEW feature – follow `.Superfluid/Features/Build_Template.md` procedure to scaffold a new feature
-      2. Switch to another tracked feature
-      3. Review loaded feature data (plan/context/log/learn)
-      4. Continue working on this feature (go to next step/plan)
-      <!-- SF> 2025-06-13 16:05 | Added menu item 5 'Just Code' for users who want a clean coding session without changing active feature (renumbered) -->
-      5. Just Code (clean session – do not load or modify any feature context)
-  4. Wait for user to select one of these options (do NOT proceed to implementation unless explicitly told by the user).
-      <!-- SF> 2025-06-13 16:05 | Updated special-case numbering for 'Just Code' (option 5) and documented behavior -->
-     - **Special case:** If the user enters `5` (“Just Code”), simply reply **“Clean Session Started”** and continue with normal assistant behavior without altering `ActiveFeature` or loading any feature files.
-
-## Session Save Workflow <!-- SF> 2025-06-13 16:40 | Added guidance for richer context saving including conversation log -->
-
-When the user indicates they want to **save / pause the session** (e.g., “save session”, “end for now”, or similar):
-
-1. Append a new entry to `<FeatureName>_Context.md` (or a generic `Session_Context.md` if no `ActiveFeature`). Each entry must include:
-   - **Timestamp** in `YYYY-MM-DD HH:mm` format.
-   - **Current Step** (if working from a feature plan) or a short description of current task.
-   - **Notes** summarising what was accomplished or observed in this session.
-   - **Next Actions** list for the following session.
-   - **Branch/Commit** hash (if applicable).
-
-2. **Conversation History (FULL)**: Immediately after the standard fields, insert a collapsible `<details>` block that captures the **entire chat transcript from the current session**.  This ensures the next session can restore every nuance of the dialogue, code decisions, and rationale.
-
-```
-<details>
-<summary>Conversation Log 2025-06-13 16:40</summary>
-
-```text
-User: …
-Assistant: …
-… (entire conversation or middle trimmed if exceedingly long)
-```
-
-</details>
-```
-
-   *If the transcript is extremely long (≈300+ lines), it is acceptable to collapse or summarise the **middle** portion only, but never remove the beginning or the most-recent exchanges.*
-
-3. Confirm the entry has been written and then tell the user “Session saved.”
-
-4. Do **not** modify `ActiveFeature`—the intent is to resume later with identical context.
-
----
-
-# ========== Other Environment and Coding Docs Follow =============
-
 # Session Environment
 - Host OS: Windows 10/11 via WSL2.
 - Shell: Powershell launching into WSL.
@@ -85,6 +21,7 @@ This file outlines how comments should be formatted across different languages u
 
 # Instructions
 
+
 **Print “REBUILD REQUIRED” Only When Necessary (SF> 2025-06-09 12:50 | Formatting aligned to user expectation):**
 
 - If you modify source code (e.g., `.ts`, `.tsx`, `.rs` files, or implementation/logic):
@@ -104,7 +41,7 @@ From now on, for every code file you modify (no matter how small the change), yo
     Goal 1:I actually like how you a
 
         * Add a timestamped inline comment at the site of each change, using the format and comment style defined in
-.Superfluid/Config/CommentGuide.md`.
+`.Superfluid/Config/CommentGuide.md`.
             * This comment must describe what was changed and why (one or two sentences).
 
             * If modifying or adding multiple blocks in the same file, ensure each is annotated at the edit location.
@@ -132,23 +69,19 @@ i d not think yo
 #include .Superfluid/Personalities/Jarvis.md
 #include .Superfluid/Config/CommentGuide.md
 
----
+### On Startup: Feature Context Restoration
+1. Read the `ActiveFeature: FullBoatWebMode` directive in this file (if present) to determine the feature to resume.
+2. If no `ActiveFeature` is set, scan `.Superfluid/Features/` subdirectories for any `*_Context.md` files and select the one matching the desired feature.
+3. For the chosen `<FeatureName>`, load:
+   - `<FeatureName>_Context.md` (session context)
+   - `<FeatureName>_Plan.md` (implementation plan)
+   - `<FeatureName>_Log.md` (feature change log)
+   - `<FeatureName>_Learn.md` (learning log)
+4. Resume processing at the recorded **Current Step** and follow **Next Actions**.
 
-## Troubleshooting – Git Commit Permission Errors <!-- SF> 2025-06-13 17:58 | Added guidance for work-tree permission issues & approval-mode workaround. -->
-
-On Windows-mounted repositories (`/mnt/c/...`) the assistant sometimes hits a
-`permission denied` error creating `.git/index.lock` or work-tree lock files
-during `git add / git commit`.  This is due to Windows ACL semantics rather
-than an agent bug.
-
-**Two quick fixes:**
-
-1. Manually stage & commit from your own shell (PowerShell/WSL) where you have
-   sufficient rights, then push.
-
-2. Temporarily switch the assistant’s **approval mode** to `approve` (i.e.
-   grant it higher privilege) and ask it to retry the commit/push.  Revert the
-   approval mode after the push succeeds.
-
-Moving the repository to a POSIX-native path (e.g. `~/projects`) permanently
-avoids this permission quirk.
+### On Save: Active Feature Tracking
+- After writing to `<FeatureName>_Context.md` or `<FeatureName>_Log.md`, update this file to set:
+  ```
+  ActiveFeature: FullBoatWebMode
+  ```
+- This ensures the agent knows which feature and context to load for subsequent sessions.

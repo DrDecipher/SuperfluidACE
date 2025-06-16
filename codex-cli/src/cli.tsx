@@ -21,9 +21,45 @@ if (fs.existsSync(agentsPath)) {
 
         const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
         rl.question('Select your next action (0-3): ', answer => {
-            if (answer.trim() === '3') {
+            const choice = answer.trim();
+
+            if (choice === '0' || choice === '1') {
+                // SF> 2025-06-13 18:40 | New Feature wizard integration.
                 rl.close();
-                // Proceed with usual code...
+                startNewFeature(activeFeature).catch(e => {
+                    // eslint-disable-next-line no-console
+                    console.error('Failed to scaffold new feature:', e);
+                    process.exit(1);
+                });
+                return;
+            }
+
+            if (choice === '3') {
+                // SF> 2025-06-13 18:25 | Instead of immediately launching, show next step and ask for confirmation.
+
+                // Try to read the feature plan to find the first "Status: Not Started" or "In Progress" step.
+                const planFile = `.Superfluid/Features/${activeFeature}/${activeFeature}_Plan.md`;
+                let nextStepLine = '(could not determine next step)';
+                try {
+                    const plan = fs.readFileSync(planFile, 'utf8').split(/\r?\n/);
+                    const step = plan.find((l) => l.startsWith('### '));
+                    if (step) nextStepLine = step.replace(/^###\s*/, '');
+                } catch {/* ignore */}
+
+                // eslint-disable-next-line no-console
+                console.log(`\nNext planned step for ${activeFeature}: ${nextStepLine}`);
+
+                rl.question('Type "start" to continue with this step, or anything else to cancel: ', confirm => {
+                    if (confirm.trim().toLowerCase() === 'start') {
+                        rl.close();
+                        // Proceed with usual code...
+                    } else {
+                        // eslint-disable-next-line no-console
+                        console.log('Operation cancelled. Exiting.');
+                        rl.close();
+                        process.exit(0);
+                    }
+                });
             } else {
                 // eslint-disable-next-line no-console
                 console.log('Please implement desired action for selection:', answer.trim());
@@ -88,6 +124,104 @@ import meow from "meow";
 import os from "os";
 import path from "path";
 import React from "react";
+
+// SF> 2025-06-14 13:48 | Added startNewFeature wizard implementation for interactive feature scaffolding.
+
+/**
+ * Prompts the user for a new feature name / description and scaffolds the
+ * required markdown files inside `.Superfluid/Features/<FeatureName>/`.
+ *
+ * Once created, the function updates the `ActiveFeature:` directive inside
+ * `agents.md` so that subsequent sessions restore the correct context.
+ *
+ * This helper is intentionally kept self-contained inside `cli.tsx` to avoid
+ * additional build dependencies. Tests can import it directly via
+ * `import { startNewFeature } from "../src/cli"`.
+ */
+export async function startNewFeature(_currentFeature?: string): Promise<void> {
+  // SF> 2025-06-14 13:48 | Implementation of wizard according to user story.
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+
+  // Promisify question helper
+  const ask = (q: string) =>
+    new Promise<string>((resolve) => rl.question(q, (ans) => resolve(ans.trim())));
+
+  const defaultNameSuggestion = `Feature${Date.now()}`;
+  const rawName = await ask(`Enter a name for the new feature [${defaultNameSuggestion}]: `);
+  const featureName = rawName || defaultNameSuggestion;
+
+  const description = await ask("Short description: ");
+
+  // Confirm before writing any files.
+  const confirm = (await ask(`\nScaffold feature "${featureName}" now? (y/N): `)).toLowerCase();
+  if (confirm !== "y" && confirm !== "yes") {
+    // eslint-disable-next-line no-console
+    console.log("Aborted – no changes written.");
+    rl.close();
+    process.exit(0);
+  }
+
+  rl.close();
+
+  scaffoldFeature(featureName, description);
+
+  // eslint-disable-next-line no-console
+  console.log(`\nSuccessfully scaffolded feature \"${featureName}\".`);
+  process.exit(0);
+}
+
+// SF> 2025-06-14 13:55 | Extracted pure helper for testability.
+export function scaffoldFeature(
+  featureName: string,
+  description = "",
+  rootDir: string = process.cwd(),
+): void {
+  const baseDir = path.join(rootDir, ".Superfluid", "Features", featureName);
+  fs.mkdirSync(baseDir, { recursive: true });
+
+  const writeIfMissing = (fp: string, content: string) => {
+    if (!fs.existsSync(fp)) {
+      fs.writeFileSync(fp, content, "utf8");
+    }
+  };
+
+  const nowIso = new Date().toISOString();
+  writeIfMissing(
+    path.join(baseDir, `${featureName}_Context.md`),
+    `# ${featureName} Context\n\n${description}\n\nCreated: ${nowIso}\n`,
+  );
+  writeIfMissing(
+    path.join(baseDir, `${featureName}_Plan.md`),
+    `# ${featureName} Plan\n\n### Step 1\n- [ ] Define initial goals\n`,
+  );
+  writeIfMissing(
+    path.join(baseDir, `${featureName}_Log.md`),
+    `# ${featureName} Log\n\n${nowIso} – Feature scaffolded.\n`,
+  );
+  writeIfMissing(
+    path.join(baseDir, `${featureName}_Learn.md`),
+    `# ${featureName} Learn\n\n`,
+  );
+
+  // Update ActiveFeature directive
+  const agentsFile = path.join(rootDir, "agents.md");
+  let agentsContent = fs.existsSync(agentsFile)
+    ? fs.readFileSync(agentsFile, "utf8")
+    : "";
+  if (/^ActiveFeature:/m.test(agentsContent)) {
+    agentsContent = agentsContent.replace(/^ActiveFeature:.+$/m, `ActiveFeature: ${featureName}`);
+  } else {
+    agentsContent = `ActiveFeature: ${featureName}\n\n` + agentsContent;
+  }
+  fs.writeFileSync(agentsFile, agentsContent, "utf8");
+
+  // Central change log
+  const logFile = path.join(rootDir, ".Superfluid", "Logs", "changeLog.md");
+  fs.mkdirSync(path.dirname(logFile), { recursive: true }); // SF> 2025-06-14 14:26 | Ensure log directory exists before appending.
+  const ts = new Date().toISOString().slice(0, 16).replace("T", " ");
+  const logEntry = `${ts} scaffoldFeature() 0-0 Scaffolded feature \"${featureName}\"`;
+  fs.appendFileSync(logFile, `\n${logEntry}\n`);
+}
 
 // Call this early so `tail -F "$TMPDIR/oai-codex/codex-cli-latest.log"` works
 // immediately. This must be run with DEBUG=1 for logging to work.
