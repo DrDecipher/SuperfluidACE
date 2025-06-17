@@ -77,4 +77,39 @@ Instruction: Please maintain one blank line between each log entry.
 2025-06-13 16:45 .Superfluid/Features/FullBoatWebMode/FullBoatWebMode_Context.md +15 Added new session context entry with collapsible conversation log.
 2025-06-13 16:55 .Superfluid/Features/FullBoatWebMode/FullBoatWebMode_Context.md +30 Replaced placeholder log with full conversation history.
 2025-06-13 17:00 AGENTS.md 30-45 Clarified that session save must include full conversation transcript; Feature_Template updated accordingly.
-2025-06-13 17:05 .Superfluid/Features/FullBoatWebMode/FullBoatWebMode_Context.md +20 Added new context save entry with full conversation log for confirmation.2025-06-14 13:39 codex-cli/src/approvals.ts 178-208 Disable writableRoots path enforcement for apply_patch in full-auto/full-boat (admin override: all patches allowed).
+2025-06-13 17:05 .Superfluid/Features/FullBoatWebMode/FullBoatWebMode_Context.md +20 Added new context save entry with full conversation log for confirmation.
+2025-06-14 13:39 codex-cli/src/approvals.ts 178-208 Disable writableRoots path enforcement for apply_patch in full-auto/full-boat (admin override: all patches allowed).
+2025-06-16 14:30 codex-cli/src/utils/config.ts 117-133 Added fallback to global OPENAI_API_KEY when env var not set, enabling setApiKey override in getApiKey.
+
+2025-06-16 15:00 codex-cli/tests/get-api-key.test.ts 1-50 Added tests for getApiKey fallback behavior for openai and provider-specific env var.
+
+2025-06-16 15:10 codex-cli/scripts/test-shim.cjs 1-5 Stub rollup native dependency to prevent module not found error in tests.
+
+2025-06-16 15:15 codex-cli/scripts/test-shim.cjs 16-24 Extended esbuild stub to include subpaths and ESM imports, preventing optional dependency errors in tests.
+
+2025-06-16 15:20 codex-cli/scripts/test-shim.cjs 1-3 Registered ts-node to enable loading TypeScript config files without esbuild bundling.
+
+2025-06-16 15:25 codex-cli/package.json 18 Modified test script to use JS vitest.config.js and bypass TS config file bundling.
+
+2025-06-16 15:25 codex-cli/vitest.config.js 1-10 Added JavaScript Vitest config to bypass TS bundling and esbuild binary errors.
+ 
+2025-06-16 15:30 codex-cli/vitest.config.cjs 1-10 Added CommonJS Vitest config to bypass TS config bundling and esbuild dependency issues.
+
+2025-06-16 15:30 codex-cli/package.json 18 Updated test script to use CJS config file for Vitest, avoiding TS config file bundling.
+
+2025-06-16 15:35 codex-cli/scripts/test-shim.cjs 73-80 Extended ESM resolver stub to cover esbuild subpaths and @esbuild packages, preventing binary resolution errors during testing.
+
+2025-06-16 15:40 codex-cli/scripts/getApiKeyTest.js 1-15 Added manual Node script to test getApiKey behavior for OPENAI and provider-specific env vars.
+ 
+2025-06-17 12:00 .Superfluid/Config/GitPolicy.md 1-55 Created Git policy document with initial guidelines.
+ 
+2025-06-17 12:10 .Superfluid/Config/GitPolicy.md 2-6 Added 'Rules' section with global rule restricting merges into main to explicit user requests.
+ 
+2025-06-17 12:20 .Superfluid/Config/GitPolicy.md 3-7 Added rule requiring user confirmation before committing/pushing to remote branches.
+ 
+2025-06-17 12:30 .Superfluid/Config/CommentPolicy.md 1-4 Added 'Rules' section with global rule requiring timestamped inline comments on code modifications.
+
+2025-06-17 12:50 .Superfluid/TechDebt/LintIssues.md 1-6 Created LintIssues.md to document outstanding ESLint failures and recommend remediation.
+ 
+2025-06-17 12:40 .Superfluid/Config/GitPolicy.md 1-2,6 Removed SF> inline comment annotations from the Rules section.
+2025-06-17 12:40 .Superfluid/Config/CommentPolicy.md 1-5 Removed SF> comment annotation from top and added rule restricting SF> style to code files only.
