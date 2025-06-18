@@ -1,75 +1,4 @@
 #!/usr/bin/env node
-// SF> 2025-06-13 17:25 | Moved shebang to top to satisfy TypeScript rules; added fs import before usage.
-/* eslint-disable import/order */ // SF> 2025-06-13 17:45 | Disable import order rule for bootstrap; console rules deemed acceptable.
-
-// SF> 2024-06-12 | Auto-load and prompt for session tracking via agents.md (Feature Restoration).
-import readline from 'readline';
-import fs from 'fs'; // SF> 2025-06-13 17:25 | Ensure fs is imported before being referenced below.
-// SF> 2024-06-12 | Feature restoration logic from agents.md
-const agentsPath = 'agents.md';
-if (fs.existsSync(agentsPath)) {
-    const content = fs.readFileSync(agentsPath, 'utf8');
-    const activeFeatureLine = content.match(/^ActiveFeature: (.+)$/m);
-    if (activeFeatureLine) {
-    const activeFeature = (activeFeatureLine?.[1] ?? '').trim(); // SF> 2025-06-13 17:30 | Guard against undefined match to satisfy strict null checks.
-        // eslint-disable-next-line no-console
-        console.log('\nDetected Active Feature:', activeFeature);
-        // eslint-disable-next-line no-console
-        console.log('Feature Session Workflow:');
-        // eslint-disable-next-line no-console
-        console.log(`\n[0] Start NEW feature\n[1] Switch to another tracked feature\n[2] Review loaded feature data (plan/context/log/learn)\n[3] Continue working on this feature (go to next step/plan)`);
-
-        const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-        rl.question('Select your next action (0-3): ', answer => {
-            const choice = answer.trim();
-
-            if (choice === '0' || choice === '1') {
-                // SF> 2025-06-13 18:40 | New Feature wizard integration.
-                rl.close();
-                startNewFeature(activeFeature).catch(e => {
-                    // eslint-disable-next-line no-console
-                    console.error('Failed to scaffold new feature:', e);
-                    process.exit(1);
-                });
-                return;
-            }
-
-            if (choice === '3') {
-                // SF> 2025-06-13 18:25 | Instead of immediately launching, show next step and ask for confirmation.
-
-                // Try to read the feature plan to find the first "Status: Not Started" or "In Progress" step.
-                const planFile = `.Superfluid/Features/${activeFeature}/${activeFeature}_Plan.md`;
-                let nextStepLine = '(could not determine next step)';
-                try {
-                    const plan = fs.readFileSync(planFile, 'utf8').split(/\r?\n/);
-                    const step = plan.find((l) => l.startsWith('### '));
-                    if (step) nextStepLine = step.replace(/^###\s*/, '');
-                } catch {/* ignore */}
-
-                // eslint-disable-next-line no-console
-                console.log(`\nNext planned step for ${activeFeature}: ${nextStepLine}`);
-
-                rl.question('Type "start" to continue with this step, or anything else to cancel: ', confirm => {
-                    if (confirm.trim().toLowerCase() === 'start') {
-                        rl.close();
-                        // Proceed with usual code...
-                    } else {
-                        // eslint-disable-next-line no-console
-                        console.log('Operation cancelled. Exiting.');
-                        rl.close();
-                        process.exit(0);
-                    }
-                });
-            } else {
-                // eslint-disable-next-line no-console
-                console.log('Please implement desired action for selection:', answer.trim());
-                rl.close();
-                process.exit(0);
-            }
-        });
-        // Prevent session from launching until the selection is made!
-    }
-}
 import "dotenv/config";
 
 // Exit early if on an older version of Node.js (< 22)
@@ -119,109 +48,12 @@ import { parseToolCall } from "./utils/parsers";
 import { onExit, setInkRenderer } from "./utils/terminal";
 import chalk from "chalk";
 import { spawnSync } from "child_process";
+import fs from "fs";
 import { render } from "ink";
 import meow from "meow";
 import os from "os";
 import path from "path";
 import React from "react";
-
-// SF> 2025-06-14 13:48 | Added startNewFeature wizard implementation for interactive feature scaffolding.
-
-/**
- * Prompts the user for a new feature name / description and scaffolds the
- * required markdown files inside `.Superfluid/Features/<FeatureName>/`.
- *
- * Once created, the function updates the `ActiveFeature:` directive inside
- * `agents.md` so that subsequent sessions restore the correct context.
- *
- * This helper is intentionally kept self-contained inside `cli.tsx` to avoid
- * additional build dependencies. Tests can import it directly via
- * `import { startNewFeature } from "../src/cli"`.
- */
-export async function startNewFeature(_currentFeature?: string): Promise<void> {
-  // SF> 2025-06-14 13:48 | Implementation of wizard according to user story.
-  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-
-  // Promisify question helper
-  const ask = (q: string) =>
-    new Promise<string>((resolve) => rl.question(q, (ans) => resolve(ans.trim())));
-
-  const defaultNameSuggestion = `Feature${Date.now()}`;
-  const rawName = await ask(`Enter a name for the new feature [${defaultNameSuggestion}]: `);
-  const featureName = rawName || defaultNameSuggestion;
-
-  const description = await ask("Short description: ");
-
-  // Confirm before writing any files.
-  const confirm = (await ask(`\nScaffold feature "${featureName}" now? (y/N): `)).toLowerCase();
-  if (confirm !== "y" && confirm !== "yes") {
-    // eslint-disable-next-line no-console
-    console.log("Aborted – no changes written.");
-    rl.close();
-    process.exit(0);
-  }
-
-  rl.close();
-
-  scaffoldFeature(featureName, description);
-
-  // eslint-disable-next-line no-console
-  console.log(`\nSuccessfully scaffolded feature \"${featureName}\".`);
-  process.exit(0);
-}
-
-// SF> 2025-06-14 13:55 | Extracted pure helper for testability.
-export function scaffoldFeature(
-  featureName: string,
-  description = "",
-  rootDir: string = process.cwd(),
-): void {
-  const baseDir = path.join(rootDir, ".Superfluid", "Features", featureName);
-  fs.mkdirSync(baseDir, { recursive: true });
-
-  const writeIfMissing = (fp: string, content: string) => {
-    if (!fs.existsSync(fp)) {
-      fs.writeFileSync(fp, content, "utf8");
-    }
-  };
-
-  const nowIso = new Date().toISOString();
-  writeIfMissing(
-    path.join(baseDir, `${featureName}_Context.md`),
-    `# ${featureName} Context\n\n${description}\n\nCreated: ${nowIso}\n`,
-  );
-  writeIfMissing(
-    path.join(baseDir, `${featureName}_Plan.md`),
-    `# ${featureName} Plan\n\n### Step 1\n- [ ] Define initial goals\n`,
-  );
-  writeIfMissing(
-    path.join(baseDir, `${featureName}_Log.md`),
-    `# ${featureName} Log\n\n${nowIso} – Feature scaffolded.\n`,
-  );
-  writeIfMissing(
-    path.join(baseDir, `${featureName}_Learn.md`),
-    `# ${featureName} Learn\n\n`,
-  );
-
-  // Update ActiveFeature directive
-  const agentsFile = path.join(rootDir, "agents.md");
-  let agentsContent = fs.existsSync(agentsFile)
-    ? fs.readFileSync(agentsFile, "utf8")
-    : "";
-  if (/^ActiveFeature:/m.test(agentsContent)) {
-    agentsContent = agentsContent.replace(/^ActiveFeature:.+$/m, `ActiveFeature: ${featureName}`);
-  } else {
-    agentsContent = `ActiveFeature: ${featureName}\n\n` + agentsContent;
-  }
-  fs.writeFileSync(agentsFile, agentsContent, "utf8");
-
-  // Central change log
-  const logFile = path.join(rootDir, ".Superfluid", "Logs", "changeLog.md");
-  fs.mkdirSync(path.dirname(logFile), { recursive: true }); // SF> 2025-06-14 14:26 | Ensure log directory exists before appending.
-  const ts = new Date().toISOString().slice(0, 16).replace("T", " ");
-  const logEntry = `${ts} scaffoldFeature() 0-0 Scaffolded feature \"${featureName}\"`;
-  fs.appendFileSync(logFile, `\n${logEntry}\n`);
-}
 
 // Call this early so `tail -F "$TMPDIR/oai-codex/codex-cli-latest.log"` works
 // immediately. This must be run with DEBUG=1 for logging to work.
@@ -252,11 +84,10 @@ const cli = meow(
     -q, --quiet                     Non-interactive mode that only prints the assistant's final output
     -c, --config                    Open the instructions file in your editor
     -w, --writable-root <path>      Writable folder for sandbox in full-auto mode (can be specified multiple times)
-    -a, --approval-mode <mode>      Override the approval policy: 'suggest', 'auto-edit', 'full-auto', or 'full-boat' // SF> 2025-06-13 17:10 | Updated help text to include new 'full-boat' approval mode.
+    -a, --approval-mode <mode>      Override the approval policy: 'suggest', 'auto-edit', or 'full-auto'
 
     --auto-edit                Automatically approve file edits; still prompt for commands
     --full-auto                Automatically approve edits and commands when executed in the sandbox
-    --full-boat                Automatically approve edits and commands when executed with network whitelist ("full-boat" mode) // SF> 2025-06-13 17:10 | Added dedicated flag for full-boat mode to align with existing full-auto & auto-edit flags.
 
     --no-project-doc           Do not automatically include the repository's 'AGENTS.md'
     --project-doc <file>       Include an additional markdown file at <file> as context
@@ -324,23 +155,11 @@ const cli = meow(
         description:
           "Automatically run commands in a sandbox; only prompt for failures.",
       },
-      // SF> 2025-06-13 17:10 | Introduce --full-boat boolean flag mirroring --full-auto but with network whitelist enforcement.
-      fullBoat: {
-        type: "boolean",
-        description:
-          "Automatically approve commands & edits with network whitelist enforcement (full-boat mode).",
-      },
-      whitelistDomain: {
-        type: "string",
-        isMultiple: true,
-        description:
-          "Additional domain(s) to allow in full-boat mode (can be specified multiple times)",
-      },
       approvalMode: {
         type: "string",
         aliases: ["a"],
         description:
-          "Determine the approval mode for Codex (default: suggest) Values: suggest, auto-edit, full-auto, full-boat", // SF> 2025-06-13 17:10 | Included 'full-boat' in --approval-mode description.
+          "Determine the approval mode for Codex (default: suggest) Values: suggest, auto-edit, full-auto",
       },
       writableRoot: {
         type: "string",
@@ -465,12 +284,6 @@ let config = loadConfig(undefined, undefined, {
   projectDocPath: cli.flags.projectDoc,
   isFullContext: fullContextMode,
 });
-
-// SF> 2025-06-13 18:05 | Merge CLI --whitelist-domain values into config for full-boat mode.
-if (Array.isArray(cli.flags.whitelistDomain) && cli.flags.whitelistDomain.length > 0) {
-  const unique = new Set<string>([...(config.fullBoatWhitelist ?? []), ...cli.flags.whitelistDomain]);
-  config = { ...config, fullBoatWhitelist: Array.from(unique) } as typeof config;
-}
 
 // `prompt` can be updated later when the user resumes a previous session
 // via the `--history` flag. Therefore it must be declared with `let` rather
@@ -721,12 +534,9 @@ if (cli.flags.quiet) {
   }
 
   // Determine approval policy for quiet mode based on flags
-  // SF> 2025-06-13 17:10 | Extend quiet mode approval policy resolution to include --full-boat flag and 'full-boat' string.
   const quietApprovalPolicy: ApprovalPolicy =
-    cli.flags.fullBoat || cli.flags.approvalMode === "full-boat"
-      ? AutoApprovalMode.FULL_BOAT
-      : cli.flags.fullAuto || cli.flags.approvalMode === "full-auto"
-        ? AutoApprovalMode.FULL_AUTO
+    cli.flags.fullAuto || cli.flags.approvalMode === "full-auto"
+      ? AutoApprovalMode.FULL_AUTO
       : cli.flags.autoEdit || cli.flags.approvalMode === "auto-edit"
         ? AutoApprovalMode.AUTO_EDIT
         : config.approvalMode || AutoApprovalMode.SUGGEST;
@@ -755,12 +565,9 @@ if (cli.flags.quiet) {
 // 4. config.approvalMode - use the approvalMode setting from ~/.codex/config.json.
 // 5. Default – suggest mode (prompt for everything).
 
-// SF> 2025-06-13 17:10 | Add full-boat mode resolution for interactive policy.
 const approvalPolicy: ApprovalPolicy =
-  cli.flags.fullBoat || cli.flags.approvalMode === "full-boat"
-    ? AutoApprovalMode.FULL_BOAT
-    : cli.flags.fullAuto || cli.flags.approvalMode === "full-auto"
-      ? AutoApprovalMode.FULL_AUTO
+  cli.flags.fullAuto || cli.flags.approvalMode === "full-auto"
+    ? AutoApprovalMode.FULL_AUTO
     : cli.flags.autoEdit || cli.flags.approvalMode === "auto-edit"
       ? AutoApprovalMode.AUTO_EDIT
       : config.approvalMode || AutoApprovalMode.SUGGEST;
@@ -863,7 +670,7 @@ async function runQuietMode({
     ): Promise<CommandConfirmation> => {
       // In quiet mode, default to NO_CONTINUE, except when in full-auto mode
       const reviewDecision =
-        (approvalPolicy === AutoApprovalMode.FULL_AUTO || approvalPolicy === AutoApprovalMode.FULL_BOAT) // SF> 2025-06-13 17:10 | Allow full-boat to auto-continue in quiet mode similar to full-auto.
+        approvalPolicy === AutoApprovalMode.FULL_AUTO
           ? ReviewDecision.YES
           : ReviewDecision.NO_CONTINUE;
       return Promise.resolve({ review: reviewDecision });
