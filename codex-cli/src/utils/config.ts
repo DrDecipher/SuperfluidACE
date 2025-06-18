@@ -303,6 +303,45 @@ export function loadProjectDoc(cwd: string, explicitPath?: string): string {
     return "";
   }
 
+  // SF> 2025-06-18 01:20 | Added recursive `#include` expansion helper for project docs.
+  function resolveIncludes(src: string, currentDir: string, seen: Set<string>): string {
+    const lines = src.split(/\r?\n/);
+    const output: string[] = [];
+
+    for (const line of lines) {
+      const match = line.match(/^\s*#include\s+(.+)$/i);
+      if (!match) {
+        output.push(line);
+        continue;
+      }
+
+      const raw = match[1]?.trim() ?? "";
+      const cleaned = raw.replace(/^<|>$/g, "");
+      const resolved = resolvePath(currentDir, cleaned);
+
+      if (seen.has(resolved) || !existsSync(resolved)) {
+        /* eslint-disable-next-line no-console */
+        console.warn(`codex: include skipped (${cleaned}) – already included or not found`);
+        output.push(line);
+        continue;
+      }
+
+      seen.add(resolved);
+
+      try {
+        let included = readFileSync(resolved, "utf-8");
+        included = resolveIncludes(included, dirname(resolved), seen);
+        output.push(`\n<!-- begin include: ${cleaned} -->`);
+        output.push(included);
+        output.push(`<!-- end include: ${cleaned} -->\n`);
+      } catch {
+        output.push(`<!-- failed to include: ${cleaned} -->`);
+      }
+    }
+
+    return output.join("\n");
+  }
+
   try {
     const buf = readFileSync(filepath);
     if (buf.byteLength > PROJECT_DOC_MAX_BYTES) {
@@ -311,7 +350,12 @@ export function loadProjectDoc(cwd: string, explicitPath?: string): string {
         `codex: project doc '${filepath}' exceeds ${PROJECT_DOC_MAX_BYTES} bytes – truncating.`,
       );
     }
-    return buf.slice(0, PROJECT_DOC_MAX_BYTES).toString("utf-8");
+    let content = buf.slice(0, PROJECT_DOC_MAX_BYTES).toString("utf-8");
+
+    // SF> 2025-06-18 01:20 | Perform `#include` resolution on truncated content.
+    content = resolveIncludes(content, dirname(filepath), new Set([filepath]));
+
+    return content;
   } catch {
     return "";
   }
