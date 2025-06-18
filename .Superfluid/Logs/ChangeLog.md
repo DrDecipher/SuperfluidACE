@@ -113,3 +113,19 @@ Instruction: Please maintain one blank line between each log entry.
  
 2025-06-17 12:40 .Superfluid/Config/GitPolicy.md 1-2,6 Removed SF> inline comment annotations from the Rules section.
 2025-06-17 12:40 .Superfluid/Config/CommentPolicy.md 1-5 Removed SF> comment annotation from top and added rule restricting SF> style to code files only.
+
+2025-06-17 13:45 .Superfluid/Features/FullBoatWebMode/FullBoatWebMode_Log.md 6-10 Marked Step 4 and Step 5 as Complete: whitelist enforcement and configuration verified.
+
+2025-06-17 14:00 .Superfluid/Features/FullBoatWebMode/FullBoatWebMode_Status.md 1-30 Created feature status summary with current progress of all plan steps and next steps.
+
+2025-06-17 14:15 .Superfluid/Features/FullBoatWebMode/FullBoatWebMode_Status.md 7-41 Added Files Changed entries for all steps in the status document, reflecting the original plan details.
+
+2025-06-17 14:30 codex-cli/src/cli.tsx 6-72,76-159 Removed legacy feature continuation code (ActiveFeature menu, startNewFeature, scaffoldFeature) in preparation for new workflow.
+2025-06-17 14:45 codex-cli/src/cli.tsx 1-716 Restored to original upstream state to resolve build parse errors; CLI now builds successfully.
+2025-06-17 14:45 .Superfluid/Logs/ChangeLog.md 1-120 Realigned change log after CLI restoration commit.
+
+2025-06-17 14:10 .Superfluid/Features/Feature_Template.md 11-14,23-35 Updated feature template: added Status document, removed Status & Files Changed fields from plan, moved Files Changed instructions to Status document.
+
+2025-06-17 14:15 .Superfluid/Features/FullBoatWebMode/FullBoatWebMode_Plan.md 14-15,30,37,44,53,65,71,77,102 Removed Status and Files Changed fields from all plan steps; tracking moved to Status document.
+
+2025-06-17 13:10 .Superfluid/Config/CommentPolicy.md 1-10 Added rule to log all file changes to ChangeLog.md and expanded Change Logging section to cover all file types.
