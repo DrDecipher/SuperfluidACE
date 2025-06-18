@@ -2,6 +2,7 @@
 
 1. When modifying any code file, append a timestamped inline comment at each change location using the `SF> {Date/Time}` format; preserve existing comments to maintain history.
 2. Only apply this `SF>` inline comment style when making changes to code files (e.g., `.ts`, `.js`, `.rs`); documentation files (e.g., `.md`, `.yaml`) should not receive these inline comments.
+3. Log every change to any file—code, documentation, or configuration—in `.Superfluid/Logs/ChangeLog.md`, including the filename, affected line numbers (where applicable), and a concise description of the change.
 
 
 # Comment Style Guide
@@ -61,12 +62,9 @@ I
 ```
 ## Change Logging
 
-When adding notes or comments during code modifications, always append new entries rather than replacing or removing existing ones. This preserves a chronological log of changes and the rationale behind them.
+When modifying any file—code, documentation, configuration, or otherwise—always append a new entry to `.Superfluid/Logs/ChangeLog.md` rather than replacing or removing existing entries. Each entry should include:
+- Filename (with relative path)
+- Line number(s) changed (for code files)
+- A brief, concise description of the change
 
-Use the `SF>` prefix followed by a timestamp and description. Example in TypeScript:
-```ts
-// SF> 2025-06-08T09:13 | Initial implementation of session selector.
-// SF> 2025-06-09T14:27 | Enhanced menu labels with created/resumed info.
-```
-
-Apply the same pattern in other languages using their respective comment syntax as outlined above.
+Entries should be chronological to preserve the history and rationale of changes. For inline code comments, continue using the `SF>` prefix with timestamp as specified in the Rules above.

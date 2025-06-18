@@ -15,7 +15,7 @@
     "dev": "tsc --watch",
     "lint": "eslint src tests --ext ts --ext tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint src tests --ext ts --ext tsx --fix",
-    "test": "NODE_OPTIONS=--require=./scripts/test-shim.cjs vitest run",
+    "test": "NODE_OPTIONS=--require=./scripts/test-shim.cjs vitest run --threads=false --environment=node",
     "test:watch": "vitest --watch",
     "typecheck": "tsc --noEmit",
     "build": "node build.mjs",

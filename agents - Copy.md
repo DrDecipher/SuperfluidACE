@@ -70,5 +70,19 @@ i d not think yo
 #include .Superfluid/Config/CommentPolicy.md
 #include .Superfluid/Config/GitPolicy.md
 
-### Feature Continuation Workflow
-TODO: Define a new, streamlined process for feature session continuation and persistence.
+### On Startup: Feature Context Restoration
+1. Read the `ActiveFeature: FullBoatWebMode` directive in this file (if present) to determine the feature to resume.
+2. If no `ActiveFeature` is set, scan `.Superfluid/Features/` subdirectories for any `*_Context.md` files and select the one matching the desired feature.
+3. For the chosen `<FeatureName>`, load:
+   - `<FeatureName>_Context.md` (session context)
+   - `<FeatureName>_Plan.md` (implementation plan)
+   - `<FeatureName>_Log.md` (feature change log)
+   - `<FeatureName>_Learn.md` (learning log)
+4. Resume processing at the recorded **Current Step** and follow **Next Actions**.
+
+### On Save: Active Feature Tracking
+- After writing to `<FeatureName>_Context.md` or `<FeatureName>_Log.md`, update this file to set:
+  ```
+  ActiveFeature: FullBoatWebMode
+  ```
+- This ensures the agent knows which feature and context to load for subsequent sessions.

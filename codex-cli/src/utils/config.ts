@@ -116,9 +116,21 @@ export function getApiKey(provider: string = "openai"): string | undefined {
   const providerInfo = providersConfig[provider.toLowerCase()];
   if (providerInfo) {
     if (providerInfo.name === "Ollama") {
-      return process.env[providerInfo.envKey] ?? "dummy";
+      const envVal = process.env[providerInfo.envKey];
+      if (envVal) {
+        return envVal;
+      }
+      return "dummy";
     }
-    return process.env[providerInfo.envKey];
+    const envVal = process.env[providerInfo.envKey];
+    if (envVal) {
+      return envVal;
+    }
+    // SF> 2025-06-16 14:30 | Fallback to global OPENAI_API_KEY when env var not set, enabling setApiKey override.
+    if (providerInfo.envKey === "OPENAI_API_KEY" && OPENAI_API_KEY) {
+      return OPENAI_API_KEY;
+    }
+    return undefined;
   }
 
   // Checking `PROVIDER_API_KEY` feels more intuitive with a custom provider.

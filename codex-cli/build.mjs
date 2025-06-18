@@ -72,6 +72,8 @@ if (isDevBuild) {
 esbuild
   .build({
     entryPoints: ["src/cli.tsx"],
+    // Parse TypeScript/TSX files correctly
+    loader: { '.ts': 'ts', '.tsx': 'tsx' },
     // Do not bundle the contents of package.json at build time: always read it
     // at runtime.
     external: ["../package.json"],

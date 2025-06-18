@@ -11,8 +11,7 @@ Implement a new "full-boat" approval mode duplicating "full-auto" but allowing o
 
 
 ## 0. Investigation: Network Behavior under Full-Auto
-Status: Not Started
-Files Changed: N/A (investigation only)
+<!-- SF> 2025-06-17T14:15 | Removed Status and Files Changed fields; now tracked in FullBoatWebMode_Status.md -->
 Validation: Agent to run DNS, SSH, and HTTP tests (e.g., `ping`, `ssh -T`, `curl`) in both auto-edit and full-auto modes and log results.
 To diagnose DNS/resolution issues observed in full-auto mode, we tested the following:
 -- SSH connectivity: `ssh -T git@github.com -oStrictHostKeyChecking=no` → succeeded previously, authenticated as `git` (exit status 1).
@@ -28,24 +27,21 @@ To diagnose DNS/resolution issues observed in full-auto mode, we tested the foll
 ## Step-by-Step Implementation Plan
 
 ### 1. Add Mode to Enums and Type Definitions
-Status: Not Started
-Files Changed: codex-cli/src/utils/auto-approval-mode.ts, codex-cli/src/utils/approvals.ts, relevant type definition files
+<!-- SF> 2025-06-17T14:15 | Removed Status and Files Changed fields; tracking moved to Status document -->
 Validation: Agent to add ENUM and policy changes, then run `pnpm typecheck` and `pnpm test` to confirm compilation and existing tests pass.
 - Extend `AutoApprovalMode` in `utils/auto-approval-mode.ts`: add `FULL_BOAT = "full-boat"`.
 - Update `ApprovalPolicy` in `approvals.ts` to allow 'full-boat' everywhere.
 - In all relevant places (type unions, switches), add 'full-boat' option; ensure no missing branch errors.
 
 ### 2. Update CLI Arguments and Mode Handling
-Status: Not Started
-Files Changed: codex-cli/src/cli.tsx (argument definitions and help text)
+<!-- SF> 2025-06-17T14:15 | Removed Status and Files Changed fields; tracking moved to Status document -->
 Validation: Agent to execute `codex --help` and verify `full-boat` appears in `--approval-mode` options.
 - In `cli.tsx`:
     - Add 'full-boat' to `--approval-mode` valid argument values and help text.
     - Amend CLI flags and config reading so 'full-boat' is routed correctly into agent logic, just like 'full-auto'.
 
 ### 3. UI/UX and User Guidance
-Status: Not Started
-Files Changed: codex-cli/src/components/approval-mode-overlay.tsx, codex-cli/src/components/onboarding/onboarding-approval-mode.tsx
+<!-- SF> 2025-06-17T14:15 | Removed Status and Files Changed fields; tracking moved to Status document -->
 Validation: User to manually verify interactive UI or onboarding overlay includes 'full-boat' option with correct description.
 - Update `components/approval-mode-overlay.tsx`, `onboarding/onboarding-approval-mode.tsx`, and related overlays/menus:
     - Add 'full-boat' as an approval mode option to selectors.
@@ -54,8 +50,7 @@ Validation: User to manually verify interactive UI or onboarding overlay include
     - Colors/symbols: If needed, assign 'full-boat' a distinct style for clarity.
 
 ### 4. Network Whitelist Enforcement
-Status: Not Started
-Files Changed: codex-cli/src/utils/agent/handle-exec-command.ts, codex-cli/src/utils/agent/exec.ts (whitelist logic)
+<!-- SF> 2025-06-17T14:15 | Removed Status and Files Changed fields; tracking moved to Status document -->
 Validation: Agent to test network calls under full-boat mode: `curl https://github.com` should succeed; `curl https://example.com` should fail with clear error.
 In the CLI agent (TypeScript) layer, bypass OS sandbox for network calls and implement whitelist enforcement:
 - **Bypass sandbox**: in `handle-exec-command.ts`’s `getSandbox(runInSandbox)` detect `full-boat` mode and return `SandboxType.NONE` so network syscalls are allowed by the OS.
@@ -67,22 +62,19 @@ In the CLI agent (TypeScript) layer, bypass OS sandbox for network calls and imp
 - **Fallback for DNS anomalies**: if DNS resolution fails (e.g. WSL stub resolver), allow explicit SSH handshake success or cached resolution as a permit for `github.com`.
 
 ### 5. Config: Whitelist Specification
-Status: Not Started
-Files Changed: codex-cli/src/utils/config.ts (default whitelist and CLI flags)
+<!-- SF> 2025-06-17T14:15 | Removed Status and Files Changed fields; tracking moved to Status document -->
 Validation: Agent to update config file to include a new domain, then perform a network call to that domain in full-boat mode to verify whitelist extension.
   - Add config file/CLI arg/context to allow end users to specify/extend network whitelist for full-boat (default: [`github.com`, `api.openai.com`])
     - Ensure config is read into session and accessible to enforcement layer.
 
 ### 6. Documentation, Help, and Discovery
-Status: Not Started
-Files Changed: README.md, CLI help documentation, onboarding prompts, and relevant markdown docs
+<!-- SF> 2025-06-17T14:15 | Removed Status and Files Changed fields; tracking moved to Status document -->
 Validation: Agent to run `codex --help`, review README and AGENTS.md updates; user to review written documentation for clarity.
 - Update all overlays/menus/help interfaces that describe available approval modes to mention full-boat and how it differs from full-auto.
 - Document CLI options and config variables in usage and README.
 
 ### 7. Test and Validate
-Status: Not Started
-Files Changed: codex-cli/tests/* (new and updated tests for full-boat), vitest.config.ts
+<!-- SF> 2025-06-17T14:15 | Removed Status and Files Changed fields; tracking moved to Status document -->
 Validation: Agent to create and run unit/integration tests (`pnpm test`) covering full-boat behaviors; ensure all new tests pass.
 #### a. **Unit Testing**
 - Write switch/branch coverage tests in all places that now gate on approval mode (enums, overlays, CLI arger parsers, etc).
@@ -107,8 +99,7 @@ Validation: Agent to create and run unit/integration tests (`pnpm test`) coverin
 - Try to switch between modes, saving/resuming session, to confirm consistent logic
 
 ### 8. Maintenance & Future Proofing
-Status: Not Started
-Files Changed: Any code comments or documentation edits for future modes
+<!-- SF> 2025-06-17T14:15 | Removed Status and Files Changed fields; tracking moved to Status document -->
 Validation: Agent and user to review code comments and configuration schema to ensure extensibility and backward compatibility.
 - All new branches/features have clear code comments for how whitelist and enforcement interact
 - Code/logic for whitelist is reusable if new approval/network modes are added
