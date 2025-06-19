@@ -303,15 +303,70 @@ export function loadProjectDoc(cwd: string, explicitPath?: string): string {
     return "";
   }
 
+  // -----------------------------------------------------------------------
+  // Recursive `#include` expansion (ported from CodexNative)
+  // -----------------------------------------------------------------------
+
+  // 2025-06-19T00:05Z AI: Introduced resolveIncludes helper to enable recursive
+  // `#include` expansion for project doc files, matching CodexNative behaviour.
+  function resolveIncludes(
+    src: string,
+    currentDir: string,
+    included: Set<string>,
+  ): string {
+    const lines = src.split(/\r?\n/);
+    const out: Array<string> = [];
+
+    for (const line of lines) {
+      const includeMatch = line.match(/^\s*#include\s+(.+)$/i);
+      if (includeMatch) {
+        // 2025-06-19T00:05Z AI: Clean capture + path normalisation
+        const rawPath = includeMatch[1] ?? "";
+        const incPath = rawPath.trim().replace(/^<|>$/g, "");
+        const resolved = resolvePath(currentDir, incPath);
+
+        if (!included.has(resolved) && existsSync(resolved)) {
+          included.add(resolved);
+          try {
+            let includedText = readFileSync(resolved, "utf-8");
+            includedText = resolveIncludes(
+              includedText,
+              dirname(resolved),
+              included,
+            );
+            out.push(`\n<!-- begin include: ${incPath} -->\n`);
+            out.push(includedText);
+            out.push(`\n<!-- end include: ${incPath} -->\n`);
+          } catch {
+            out.push(`<!-- failed to include: ${incPath} -->`);
+          }
+        } else {
+          out.push(`<!-- include not found or already included: ${incPath} -->`);
+        }
+      } else {
+        out.push(line);
+      }
+    }
+
+    return out.join("\n");
+  }
+
   try {
     const buf = readFileSync(filepath);
+
     if (buf.byteLength > PROJECT_DOC_MAX_BYTES) {
       // eslint-disable-next-line no-console
       console.warn(
         `codex: project doc '${filepath}' exceeds ${PROJECT_DOC_MAX_BYTES} bytes – truncating.`,
       );
     }
-    return buf.slice(0, PROJECT_DOC_MAX_BYTES).toString("utf-8");
+
+    // 2025-06-19T00:05Z AI: Truncate root doc prior to include expansion for parity
+    // with CodexNative implementation to honour original size constraints.
+    let content = buf.slice(0, PROJECT_DOC_MAX_BYTES).toString("utf-8");
+    const included = new Set<string>([filepath]);
+    content = resolveIncludes(content, dirname(filepath), included);
+    return content;
   } catch {
     return "";
   }
