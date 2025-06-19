@@ -22,3 +22,7 @@
 2025-06-19T01:18Z | AGENTS.md : Session Save Requests | Documented procedure referencing sessionSave.md.
 2025-06-19T23:13Z | .pSuperfluid/Features/B_Development/002_init-feature-script.md : add Reporting Expectations | Finished step 7 – added Reporting Expectations section & updated execution table.
 2025-06-19T23:15Z | .pSuperfluid/Features/C_Implimented/002_init-feature-script.md : moved file | Feature 002 marked implemented, moved from B_Development to C_Implimented.
+2025-06-19T23:20Z | .pSuperfluid/Features/B_Development/003_home-end-keys.md : created | Initial development plan copied from design file.
+2025-06-19T23:30Z | codex-cli/src/text-buffer.ts : handleInput | Added Shift+Home/End selection logic and cleared selection on unmodified Home/End.
+2025-06-19T23:31Z | codex-cli/tests/home-end.test.ts : all | Added unit tests for Home/End navigation and selection.
+2025-06-19T23:31Z | docs/keybindings.md : new | Documented Home/End keyboard shortcuts.

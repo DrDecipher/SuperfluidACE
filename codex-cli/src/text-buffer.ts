@@ -862,6 +862,26 @@ export default class TextBuffer {
       this.move("wordLeft");
     } else if (key["meta"] && (input === "f" || input === "F")) {
       this.move("wordRight");
+    } else if (key["shift"] && key["home"]) {
+      // SF> 2025-06-19T23:30Z AI: Begin selection to start of line on Shift+Home
+      if (this.selectionAnchor == null) {
+        this.startSelection();
+      }
+      this.move("home");
+    } else if (key["shift"] && key["end"]) {
+      // SF> 2025-06-19T23:30Z AI: Begin selection to end of line on Shift+End
+      if (this.selectionAnchor == null) {
+        this.startSelection();
+      }
+      this.move("end");
+    } else if (key["home"]) {
+      // SF> 2025-06-19T23:30Z AI: Clear selection when moving without Shift
+      this.selectionAnchor = null;
+      this.move("home");
+    } else if (key["end"]) {
+      // SF> 2025-06-19T23:30Z AI: Clear selection when moving without Shift
+      this.selectionAnchor = null;
+      this.move("end");
     } else if (key["home"]) {
       this.move("home");
     } else if (key["end"]) {
