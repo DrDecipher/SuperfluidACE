@@ -33,9 +33,10 @@ The goal is to keep every feature change predictable, reviewable, and fully trac
 2. **Agent initialises development**  
    On receiving the user’s request to implement the feature:
    1. _Read_ the provided design file.
-   2. _Copy & rename_ it into `B_Development/NNN_<slug>.md`, where `NNN` is the next incremental number (zero-padded) and `<slug>` is a kebab-case summary.
-   3. _Transform_ the copied file into a **Development Plan** using the template below (keep original design context at the top if helpful).
-   4. _Present_ the plan to the user for confirmation / edits.
+   2. **Investigate the codebase** – locate relevant files, identify constraints, and gather context that could influence scoping or approach. Capture key findings.
+   3. _Copy & rename_ the design file into `B_Development/NNN_<slug>.md`, where `NNN` is the next incremental number (zero-padded) and `<slug>` is a kebab-case summary.
+   4. _Transform_ the copied file into a **Development Plan** using the template below (keep original design context at the top if helpful). Include investigation notes.
+   5. _Present_ the plan to the user for confirmation / edits.
 
 3. **Implementation Phase**  
    • Follow the approved Execution Steps within the development document.  
@@ -72,6 +73,7 @@ and *Files* to “None”. Update them as work progresses.
 
 | # | Description | Status | Files |
 |---|-------------|--------|-------|
+| 0 | Investigate codebase & record findings | Not Started | None |
 | 1 | <step> | Not Started | None |
 | 2 | <step> | Not Started | None |
 
@@ -126,10 +128,11 @@ User: “I have a new feature – see A_Design/MyIdea.md”
 You:
 1. Read A_Design/MyIdea.md
 2. Derive slug → my-idea
-3. Copy → B_Development/00X_my-idea.md
-4. Insert Development Plan Template & fill sections
-5. Show plan to user; await approval
-6. Implement; update Execution Report; log changes
+3. Investigate codebase; jot findings
+4. Copy → B_Development/00X_my-idea.md
+5. Insert Development Plan Template & fill sections (include investigation notes)
+6. Show plan to user; await approval
+7. Implement; update Execution Report; log changes
 ```
 
 ---

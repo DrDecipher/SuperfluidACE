@@ -22,6 +22,7 @@ eliminate manual numbering/sluggification errors.
 
 | # | Description | Status | Files |
 |---|-------------|--------|-------|
+| 0 | Investigate codebase & record findings | Complete | (context exploration – no modifications) |
 | 1 | Draft high-level design (`A_Design/init_feature_script.md`). | Complete | .pSuperfluid/Features/A_Design/init_feature_script.md |
 | 2 | Implement `init_feature.py` helper script. | Complete | .pSuperfluid/Scripts/python/init_feature.py |
 | 3 | Update `FeatureDev.md` with “Tooling Shortcut” docs. | Complete | .pSuperfluid/Features/FeatureDev.md |

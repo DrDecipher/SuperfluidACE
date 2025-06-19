@@ -47,6 +47,7 @@ TEMPLATE = (
     "## Execution Steps\n\n"
     "| # | Description | Status | Files |\n"
     "|---|-------------|--------|-------|\n"
+    "| 0 | Investigate codebase & record findings | Not Started | None |\n"
     "| 1 | <step> | Not Started | None |\n"
     "| 2 | <step> | Not Started | None |\n\n"
     "## Potential Pitfalls\n\n* Bullet list …\n\n"
