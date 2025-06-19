@@ -28,9 +28,9 @@ only occur at user-approved milestones**.
 1. Make unlimited local commits as you work. Prefix the subject with
    `WIP:` and feel free to use `--no-verify` while code or docs are
    incomplete.
-2. A *milestone* is reached when:
-   • The relevant row in the feature’s Execution-Steps table moves from *In
-     Progress* → *Complete*.
+2. A _milestone_ is reached when:
+   • The relevant row in the feature’s Execution-Steps table moves from _In
+   Progress_ → _Complete_.
    • Lint / tests / build succeed locally.
    • The user explicitly authorises pushing.
 3. Before pushing, optionally squash or reword your WIP commits so the final
@@ -45,5 +45,15 @@ git push --set-upstream origin <branch>   # first push
 This keeps the remote history clean while retaining detailed local history for
 easy rollback.
 
+---
 
+## Session Save Requests
 
+When the **user explicitly asks to “save the session”**, overwrite
+`.pSuperfluid/Features/sessionResume.md` following the checklist in
+`.pSuperfluid/Features/sessionSave.md`.
+
+• Include Narrative Context, Cheat-Sheet, and Error-handling guidance.  
+• Append a ChangeLog entry.  
+• Commit locally, but **do not push** unless the save aligns with an approved
+milestone.
