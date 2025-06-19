@@ -1,9 +1,41 @@
 # How to Resume an In-Progress Feature Development Session
 
-This cheat-sheet shows **exact commands** you can copy-and-paste at the start
-of a fresh Codex session to pick up where you left off.  The example uses
-**Feature 002 – Init-Feature Script**, but the pattern is identical for any
-feature.
+This file has two parts:
+
+1. **Narrative hand-off** – gives the next agent context so they understand
+   what we were doing without trawling through Git history.
+2. **Concrete cheat-sheet** – copy/paste commands for the mechanical steps.
+
+The example targets **Feature 002 – Init-Feature Script**, but the pattern
+applies to any feature.
+
+---
+
+## 1  Narrative Context
+
+We are extending the *feature-development workflow* inside SuperfluidACE.
+
+• Feature 001 added recursive `#include` support.  
+• Feature 002 created `init_feature.py`, plus Status/Files tracking tables, and
+  introduced the Milestone-Push Git policy.
+
+In Feature 002 **all steps are complete except Step 7** – adding a “Reporting
+Expectations” subsection to the dev-plan file.
+
+When you (future agent) resume:
+
+1. Open `.pSuperfluid/Features/B_Development/002_init-feature-script.md`.
+2. In the Execution-Steps table mark Step 7 Status → *In Progress* **before**
+   editing.
+3. Add the missing subsection (copy style from Feature 001).
+4. Mark Step 7 *Complete* and fill the Files column.
+5. Append a ChangeLog entry and follow CommentPolicy.
+6. **Do not push** until the user approves – see Milestone-Push policy in
+   `AGENTS.md`.
+
+---
+
+## 2  Copy-and-Paste Cheat-Sheet
 
 ---
 
