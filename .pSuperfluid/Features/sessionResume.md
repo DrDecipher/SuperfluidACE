@@ -11,31 +11,41 @@ applies to any feature.
 
 ---
 
-## 1  Narrative Context
+## 1 Narrative Context
 
-We are extending the *feature-development workflow* inside SuperfluidACE.
+We are extending the _feature-development workflow_ inside SuperfluidACE.
 
 • Feature 001 added recursive `#include` support.  
 • Feature 002 created `init_feature.py`, plus Status/Files tracking tables, and
-  introduced the Milestone-Push Git policy.
+introduced the Milestone-Push Git policy.
 
-In Feature 002 **all steps are complete except Step 7** – adding a “Reporting
-Expectations” subsection to the dev-plan file.
+In Feature 002 **all steps are complete except Step 7** – adding a
+“Reporting Expectations” subsection that:
+
+• Briefly explains what was accomplished so far.  
+• Lists any remaining tasks or follow-ups.  
+• Ends with a clear question or prompt asking the user how to proceed.
 
 When you (future agent) resume:
 
 1. Open `.pSuperfluid/Features/B_Development/002_init-feature-script.md`.
-2. In the Execution-Steps table mark Step 7 Status → *In Progress* **before**
+2. In the Execution-Steps table mark Step 7 Status → _In Progress_ **before**
    editing.
 3. Add the missing subsection (copy style from Feature 001).
-4. Mark Step 7 *Complete* and fill the Files column.
+4. Mark Step 7 _Complete_ and fill the Files column.
 5. Append a ChangeLog entry and follow CommentPolicy.
 6. **Do not push** until the user approves – see Milestone-Push policy in
    `AGENTS.md`.
 
+If you hit an unexpected error:
+
+• Re-read the project policies in `AGENTS.md` to ensure your next action is compliant.  
+• Check `.pSuperfluid/Logs/ChangeLog.md` for recent context.  
+• Ask the user for guidance rather than guessing — preserving history is more important than speed.
+
 ---
 
-## 2  Copy-and-Paste Cheat-Sheet
+## 2 Copy-and-Paste Cheat-Sheet
 
 ---
 
@@ -52,8 +62,9 @@ nvim .pSuperfluid/Features/B_Development/002_init-feature-script.md
 # 3. Add the missing subsection inside the plan file
 #    ------------------------------------------------
 #    ### Reporting Expectations
-#    • Summarise feature status and next steps for the user.
-#    • … (copy style from Feature 001)
+#    • One-paragraph summary of work completed on Feature 002 so far.
+#    • Bullet list of any open questions / remaining actions (should be empty after this addition).
+#    • Concluding prompt asking the user to confirm next steps.
 #    ------------------------------------------------
 
 # 4. Mark the row as Complete and fill the Files column:

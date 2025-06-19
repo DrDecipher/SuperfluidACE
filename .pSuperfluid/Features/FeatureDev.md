@@ -1,11 +1,11 @@
 # Feature Development Workflow
 
-This document defines the **standard operating procedure (SOP)** for turning a high-level feature design into an implemented, tested, and documented deliverable inside *SuperfluidACE-CodexC*.
+This document defines the **standard operating procedure (SOP)** for turning a high-level feature design into an implemented, tested, and documented deliverable inside _SuperfluidACE-CodexC_.
 
 The goal is to keep every feature change predictable, reviewable, and fully traceable via the `.pSuperfluid` metadata hierarchy.
 
 > **Tooling Shortcut**  
-> Run `python .pSuperfluid/Scripts/python/init_feature.py <path-to-design>` to generate the boiler-plate development plan shown below automatically.  The helper script will:  
+> Run `python .pSuperfluid/Scripts/python/init_feature.py <path-to-design>` to generate the boiler-plate development plan shown below automatically. The helper script will:  
 > • Pick the next incremental number,  
 > • Slugify the title,  
 > • Stamp today’s date, and  
@@ -32,6 +32,7 @@ The goal is to keep every feature change predictable, reviewable, and fully trac
 
 2. **Agent initialises development**  
    On receiving the user’s request to implement the feature:
+
    1. _Read_ the provided design file.
    2. **Investigate the codebase** – locate relevant files, identify constraints, and gather context that could influence scoping or approach. Capture key findings.
    3. _Copy & rename_ the design file into `B_Development/NNN_<slug>.md`, where `NNN` is the next incremental number (zero-padded) and `<slug>` is a kebab-case summary.
@@ -41,7 +42,7 @@ The goal is to keep every feature change predictable, reviewable, and fully trac
 3. **Implementation Phase**  
    • Follow the approved Execution Steps within the development document.  
    • For every code change obey project policies (inline timestamps, central changelog).  
-   • Update the *Execution Report* section of the feature file as work progresses.
+   • Update the _Execution Report_ section of the feature file as work progresses.
 
 4. **Completion & Handover**  
    • Mark status as **Complete** in the Execution Report.  
@@ -56,7 +57,7 @@ Paste the following scaffold into `B_Development/NNN_<slug>.md` after copying th
 ```markdown
 # Feature NNN – <Human-Readable Title>
 
-*Design origin: A_Design/<file>.md (copied on YYYY-MM-DD)*
+_Design origin: A_Design/<file>.md (copied on YYYY-MM-DD)_
 
 ## Goal
 
@@ -64,40 +65,40 @@ Paste the following scaffold into `B_Development/NNN_<slug>.md` after copying th
 
 ## Requirements / Acceptance Criteria
 
-* Bullet list …
+- Bullet list …
 
 ## Execution Steps
 
-Use a table to track progress **per step**. Initialise *Status* to “Not Started”
-and *Files* to “None”. Update them as work progresses.
+Use a table to track progress **per step**. Initialise _Status_ to “Not Started”
+and _Files_ to “None”. Update them as work progresses.
 
-| # | Description | Status | Files |
-|---|-------------|--------|-------|
-| 0 | Investigate codebase & record findings | Not Started | None |
-| 1 | <step> | Not Started | None |
-| 2 | <step> | Not Started | None |
+| #   | Description                            | Status      | Files |
+| --- | -------------------------------------- | ----------- | ----- |
+| 0   | Investigate codebase & record findings | Not Started | None  |
+| 1   | <step>                                 | Not Started | None  |
+| 2   | <step>                                 | Not Started | None  |
 
 ## Potential Pitfalls
 
-* Bullet list …
+- Bullet list …
 
 ## Timeline Estimate
 
-| Task | ETA |
-|------|-----|
-| Planning | X |
-| Coding   | X |
-| Tests    | X |
-| Docs     | X |
+| Task     | ETA |
+| -------- | --- |
+| Planning | X   |
+| Coding   | X   |
+| Tests    | X   |
+| Docs     | X   |
 
 ---
 
 ## Execution Report
 
-*Status: In-Progress / Complete / Blocked*
+_Status: In-Progress / Complete / Blocked_
 
-| Date | Note |
-|------|------|
+| Date       | Note         |
+| ---------- | ------------ |
 | YYYY-MM-DD | Created plan |
 
 ### Outstanding Actions
@@ -109,14 +110,24 @@ and *Files* to “None”. Update them as work progresses.
 ## Context for Future Sessions
 
 <Anything a cold-start agent needs to resume work>
+
+### Reporting Expectations
+
+Add a short subsection _after_ the Execution Report whenever a milestone is
+completed. It should:
+
+1. Summarise what was implemented.
+2. List remaining work or open questions.
+3. End with a direct prompt asking the user for confirmation or guidance on
+   next steps.
 ```
 
 ---
 
 ## Numbering Convention
 
-* Start at `001_…` and increment.  
-* Keep numbers unique across **B_Development**.
+- Start at `001_…` and increment.
+- Keep numbers unique across **B_Development**.
 
 ---
 

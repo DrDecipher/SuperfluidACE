@@ -20,3 +20,5 @@
 2025-06-19T01:12Z | AGENTS.md : Milestone-Push Git Policy | Added policy for deferring pushes until user-approved milestones.
 2025-06-19T01:14Z | .pSuperfluid/Features/sessionResume.md : Intro & context | Added narrative hand-off section and clarified flow.
 2025-06-19T01:18Z | AGENTS.md : Session Save Requests | Documented procedure referencing sessionSave.md.
+2025-06-19T23:13Z | .pSuperfluid/Features/B_Development/002_init-feature-script.md : add Reporting Expectations | Finished step 7 – added Reporting Expectations section & updated execution table.
+2025-06-19T23:15Z | .pSuperfluid/Features/C_Implimented/002_init-feature-script.md : moved file | Feature 002 marked implemented, moved from B_Development to C_Implimented.
