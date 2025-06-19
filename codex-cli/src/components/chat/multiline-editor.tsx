@@ -235,6 +235,60 @@ const MultilineTextEditorInner = (
         }
       }
 
+      // -----------------------------------------------------------------
+      // 1b) Classic CSI sequences for Home/End (and Shift variants) that Ink
+      //     does NOT map into key.home/key.end on many terminals.  Encode
+      //     detection here so Home/End work even when Ink only delivers the
+      //     raw escape payload (without the leading ESC).
+      //
+      //  Common sequences (leading ESC removed by Ink):
+      //    • "[H"      → Home           (xterm)
+      //    • "[F"      → End            (xterm)
+      //    • "[1~"     → Home           (rxvt etc.)
+      //    • "[4~"     → End            (rxvt)
+      //    • "[7~"     → Home           (Linux console)
+      //    • "[8~"     → End            (Linux console)
+      //  Shift-modified variants (xterm):
+      //    • "[1;2H"   → Shift+Home
+      //    • "[1;2F"   → Shift+End
+      // -----------------------------------------------------------------
+
+      const csiHome = ["[H", "[1~", "[7~"];
+      const csiEnd = ["[F", "[4~", "[8~"];
+
+      // Shift variants contain ";2" before the final letter/tilde.
+      const shiftHome = ["[1;2H"];
+      const shiftEnd = ["[1;2F"];
+
+      if (shiftHome.includes(input)) {
+        if ((buffer.current as any).selectionAnchor == null) {
+          buffer.current.startSelection();
+        }
+        buffer.current.move("home");
+        setVersion((v) => v + 1);
+        return;
+      }
+      if (shiftEnd.includes(input)) {
+        if ((buffer.current as any).selectionAnchor == null) {
+          buffer.current.startSelection();
+        }
+        buffer.current.move("end");
+        setVersion((v) => v + 1);
+        return;
+      }
+      if (csiHome.includes(input)) {
+        (buffer.current as any).selectionAnchor = null;
+        buffer.current.move("home");
+        setVersion((v) => v + 1);
+        return;
+      }
+      if (csiEnd.includes(input)) {
+        (buffer.current as any).selectionAnchor = null;
+        buffer.current.move("end");
+        setVersion((v) => v + 1);
+        return;
+      }
+
       // 1b) CSI-~ / modifyOtherKeys *mode 1* – format: "[27;<mod>;<code>~".
       //     Terminals such as iTerm2 (default), older xterm versions, or when
       //     modifyOtherKeys=1 is configured, emit this legacy sequence.  We

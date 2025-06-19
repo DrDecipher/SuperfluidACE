@@ -822,6 +822,45 @@ export default class TextBuffer {
       return false;
     }
 
+    // --------------------------------------------------------------------
+    // Fallback: Raw CSI sequences for Home/End when upstream does not set
+    // key.home/key.end.  Ink removes the initial ESC, leaving patterns like
+    // "[H", "[F", "[1~", etc.  Handle common variants here.
+    // --------------------------------------------------------------------
+
+    if (input) {
+      const homeSeqs = ["[H", "[1~", "[7~"];
+      const endSeqs = ["[F", "[4~", "[8~"];
+      const shiftHomeSeqs = ["[1;2H"];
+      const shiftEndSeqs = ["[1;2F"];
+
+      const beforeVer2 = this.version;
+      if (shiftHomeSeqs.includes(input)) {
+        if (this.selectionAnchor == null) {
+          this.startSelection();
+        }
+        this.move("home");
+        return this.version !== beforeVer2;
+      }
+      if (shiftEndSeqs.includes(input)) {
+        if (this.selectionAnchor == null) {
+          this.startSelection();
+        }
+        this.move("end");
+        return this.version !== beforeVer2;
+      }
+      if (homeSeqs.includes(input)) {
+        this.selectionAnchor = null;
+        this.move("home");
+        return this.version !== beforeVer2;
+      }
+      if (endSeqs.includes(input)) {
+        this.selectionAnchor = null;
+        this.move("end");
+        return this.version !== beforeVer2;
+      }
+    }
+
     /* new line — Ink sets either `key.return` *or* passes a literal "\n" */
     if (key["return"] || input === "\r" || input === "\n") {
       this.newline();

@@ -20,6 +20,17 @@ describe('TextBuffer – Home/End navigation', () => {
     expect(tb.getCursor()).toEqual([0, 5]);
   });
 
+  it('CSI sequences fallback ("[H" and "[F") move caret', () => {
+    const tb = new TextBuffer('hello', 2);
+
+    // Simulate Ink stripping leading ESC and passing "[H"
+    tb.handleInput('[H', {} as any, vp());
+    expect(tb.getCursor()).toEqual([0, 0]);
+
+    tb.handleInput('[F', {} as any, vp());
+    expect(tb.getCursor()).toEqual([0, 5]);
+  });
+
   it('Shift+Home selects text to start', () => {
     const tb = new TextBuffer('hello', 3); // caret after "hel"
 
