@@ -4,6 +4,13 @@ This document defines the **standard operating procedure (SOP)** for turning a h
 
 The goal is to keep every feature change predictable, reviewable, and fully traceable via the `.pSuperfluid` metadata hierarchy.
 
+> **Tooling Shortcut**  
+> Run `python .pSuperfluid/Scripts/python/init_feature.py <path-to-design>` to generate the boiler-plate development plan shown below automatically.  The helper script will:  
+> • Pick the next incremental number,  
+> • Slugify the title,  
+> • Stamp today’s date, and  
+> • Place the new file into `B_Development/` ready for editing.
+
 ---
 
 ## Directory Summary

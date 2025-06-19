@@ -5,3 +5,8 @@
 2025-06-19T00:25Z | .pSuperfluid/Learnings/2025-06-19-sandbox-limitations-and-code-bugs.md | Documented Vitest/esbuild sandbox limitation and pre-existing TypeScript errors with proposed mitigations.
 2025-06-19T00:28Z | .pSuperfluid/Features/B_Development/001_promptInclude.md | Archived original implementation plan with execution report & future-session context.
 2025-06-19T00:31Z | .pSuperfluid/Features/FeatureDev.md & AGENTS.md | Added standard feature-development SOP and agent guidelines.
+2025-06-19T00:40Z | .pSuperfluid/Scripts/python/init_feature.py : all | Added automation script to initialise development plans from design docs.
+2025-06-19T00:41Z | .pSuperfluid/Features/FeatureDev.md : Tooling Shortcut | Documented new init_feature helper script.
+2025-06-19T00:55Z | .pSuperfluid/Scripts/python/init_feature.py : next_number() | Scan C_Implimented directory when computing next feature number.
+2025-06-19T00:56Z | .pSuperfluid/Features/A_Design/init_feature_script.md : all | Added user-level design document for helper-script feature.
+2025-06-19T00:57Z | .pSuperfluid/Features/B_Development/002_init-feature-script.md : all | Populated development plan, execution report, and outstanding task.
