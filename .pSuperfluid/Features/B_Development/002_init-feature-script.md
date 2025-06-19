@@ -20,12 +20,15 @@ eliminate manual numbering/sluggification errors.
 
 ## Execution Steps
 
-1. Draft high-level design (`A_Design/init_feature_script.md`).
-2. Implement `init_feature.py` under `.pSuperfluid/Scripts/python/`.
-3. Update `FeatureDev.md` with “Tooling Shortcut” docs.
-4. Extend script to scan both development **and** implemented directories.
-5. Log changes in central `ChangeLog.md`.
-6. Commit & push.
+| # | Description | Status | Files |
+|---|-------------|--------|-------|
+| 1 | Draft high-level design (`A_Design/init_feature_script.md`). | Complete | .pSuperfluid/Features/A_Design/init_feature_script.md |
+| 2 | Implement `init_feature.py` helper script. | Complete | .pSuperfluid/Scripts/python/init_feature.py |
+| 3 | Update `FeatureDev.md` with “Tooling Shortcut” docs. | Complete | .pSuperfluid/Features/FeatureDev.md |
+| 4 | Extend script to scan both development and implemented directories. | Complete | .pSuperfluid/Scripts/python/init_feature.py |
+| 5 | Log changes in central `ChangeLog.md`. | Complete | .pSuperfluid/Logs/ChangeLog.md |
+| 6 | Commit & push. | Complete | (commit 422f27d) |
+| 7 | Add **Reporting Expectations** subsection matching Feature 001. | Not Started | None |
 
 ## Potential Pitfalls
 
@@ -54,7 +57,7 @@ eliminate manual numbering/sluggification errors.
 
 ### Outstanding Actions
 
-1. Add **Reporting Expectations** subsection (same pattern used in Feature 001) to `002_init-feature-script.md` so future tasks are summarised for users.
+*None – folded into Execution Step 7 above.*
 
 ---
 

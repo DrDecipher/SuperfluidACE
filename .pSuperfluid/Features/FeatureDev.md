@@ -67,8 +67,13 @@ Paste the following scaffold into `B_Development/NNN_<slug>.md` after copying th
 
 ## Execution Steps
 
-1. <step>
-2. <step>
+Use a table to track progress **per step**. Initialise *Status* to “Not Started”
+and *Files* to “None”. Update them as work progresses.
+
+| # | Description | Status | Files |
+|---|-------------|--------|-------|
+| 1 | <step> | Not Started | None |
+| 2 | <step> | Not Started | None |
 
 ## Potential Pitfalls
 
