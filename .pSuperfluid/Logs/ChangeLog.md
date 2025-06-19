@@ -13,3 +13,4 @@
 2025-06-19T01:02Z | .pSuperfluid/Features/B_Development/002_init-feature-script.md : Execution Steps | Added Status & Files tracking table; integrated Reporting Expectations as step 7.
 2025-06-19T01:03Z | .pSuperfluid/Features/FeatureDev.md : Execution Steps Template | Added Status & Files columns to table.
 2025-06-19T01:03Z | .pSuperfluid/Scripts/python/init_feature.py : TEMPLATE | Embedded new table with Status & Files placeholders.
+2025-06-19T01:05Z | AGENTS.md : add Reporting Expectations quick-ref | Added guidelines snippet for milestone reporting.
