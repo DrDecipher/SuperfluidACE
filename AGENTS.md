@@ -18,5 +18,32 @@ Development-Plan file that:
 
 See Feature 001 and Feature 002 for concrete examples.
 
+---
+
+## Milestone-Push Git Policy
+
+Local checkpoints are valuable, but **pushes to the remote repository should
+only occur at user-approved milestones**.
+
+1. Make unlimited local commits as you work. Prefix the subject with
+   `WIP:` and feel free to use `--no-verify` while code or docs are
+   incomplete.
+2. A *milestone* is reached when:
+   • The relevant row in the feature’s Execution-Steps table moves from *In
+     Progress* → *Complete*.
+   • Lint / tests / build succeed locally.
+   • The user explicitly authorises pushing.
+3. Before pushing, optionally squash or reword your WIP commits so the final
+   history is concise and remove the `WIP:` prefix.
+4. After approval:
+
+```bash
+git push --set-upstream origin <branch>   # first push
+# or simply git push on subsequent pushes
+```
+
+This keeps the remote history clean while retaining detailed local history for
+easy rollback.
+
 
 

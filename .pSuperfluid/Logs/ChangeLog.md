@@ -17,3 +17,4 @@
 2025-06-19T01:08Z | .pSuperfluid/Features/FeatureDev.md & init_feature.py | Added pre-plan investigation step and updated templates.
 2025-06-19T01:08Z | .pSuperfluid/Features/B_Development/002_init-feature-script.md : Execution Steps | Added row for codebase investigation.
 2025-06-19T01:10Z | .pSuperfluid/Features/sessionResume.md : all | Added copy-paste cheat-sheet for resuming an in-progress feature.
+2025-06-19T01:12Z | AGENTS.md : Milestone-Push Git Policy | Added policy for deferring pushes until user-approved milestones.
