@@ -253,6 +253,9 @@ const MultilineTextEditorInner = (
       //    • "[1;2F"   → Shift+End
       // -----------------------------------------------------------------
 
+      // Normalise by stripping a leading ESC if present so we can compare
+      const seq = input.startsWith("\u001b") ? input.slice(1) : input;
+
       const csiHome = ["[H", "[1~", "[7~"];
       const csiEnd = ["[F", "[4~", "[8~"];
 
@@ -260,7 +263,7 @@ const MultilineTextEditorInner = (
       const shiftHome = ["[1;2H"];
       const shiftEnd = ["[1;2F"];
 
-      if (shiftHome.includes(input)) {
+      if (shiftHome.includes(seq)) {
         if ((buffer.current as any).selectionAnchor == null) {
           buffer.current.startSelection();
         }
@@ -268,7 +271,7 @@ const MultilineTextEditorInner = (
         setVersion((v) => v + 1);
         return;
       }
-      if (shiftEnd.includes(input)) {
+      if (shiftEnd.includes(seq)) {
         if ((buffer.current as any).selectionAnchor == null) {
           buffer.current.startSelection();
         }
@@ -276,13 +279,13 @@ const MultilineTextEditorInner = (
         setVersion((v) => v + 1);
         return;
       }
-      if (csiHome.includes(input)) {
+      if (csiHome.includes(seq)) {
         (buffer.current as any).selectionAnchor = null;
         buffer.current.move("home");
         setVersion((v) => v + 1);
         return;
       }
-      if (csiEnd.includes(input)) {
+      if (csiEnd.includes(seq)) {
         (buffer.current as any).selectionAnchor = null;
         buffer.current.move("end");
         setVersion((v) => v + 1);
