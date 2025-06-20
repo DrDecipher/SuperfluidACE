@@ -360,6 +360,59 @@ const MultilineTextEditorInner = (
     { isActive: focus },
   );
 
+  /* ----------------------------------------------------------------------- */
+  /*  Low-level fallback: listen to raw stdin bytes for Home/End sequences     */
+  /* ----------------------------------------------------------------------- */
+
+  React.useEffect(() => {
+    // Early exit when not focused – we shouldn't hijack keys in other widgets.
+    if (!focus) {
+      return;
+    }
+
+    function onData(raw: unknown): void {
+      const chunk = typeof raw === "string" ? raw : (raw as Buffer).toString("utf8");
+      // Raw chunk includes leading ESC. Match common sequences.
+      const seq = chunk;
+
+      const moveHome = ["\u001b[H", "\u001b[1~", "\u001b[7~"];
+      const moveEnd = ["\u001b[F", "\u001b[4~", "\u001b[8~"];
+      const selHome = ["\u001b[1;2H"];
+      const selEnd = ["\u001b[1;2F"];
+
+      const isSelHome = selHome.includes(seq);
+      const isSelEnd = selEnd.includes(seq);
+      const isHome = moveHome.includes(seq);
+      const isEnd = moveEnd.includes(seq);
+
+      if (!isSelHome && !isSelEnd && !isHome && !isEnd) {
+        return;
+      }
+
+      if (isSelHome || isSelEnd) {
+        if ((buffer.current as any).selectionAnchor == null) {
+          buffer.current.startSelection();
+        }
+      } else {
+        (buffer.current as any).selectionAnchor = null;
+      }
+
+      if (isSelHome || isHome) {
+        buffer.current.move("home");
+      } else if (isSelEnd || isEnd) {
+        buffer.current.move("end");
+      }
+
+      setVersion((v) => v + 1);
+    }
+
+    const stdin = process.stdin as NodeJS.ReadStream;
+    stdin.on("data", onData);
+    return () => {
+      stdin.off("data", onData);
+    };
+  }, [focus]);
+
   // ---------------------------------------------------------------------------
   // Rendering helpers.
   // ---------------------------------------------------------------------------
