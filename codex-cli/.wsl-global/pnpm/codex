@@ -1,0 +1,17 @@
+#!/bin/sh
+basedir=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
+
+case `uname` in
+    *CYGWIN*) basedir=`cygpath -w "$basedir"`;;
+esac
+
+if [ -z "$NODE_PATH" ]; then
+  export NODE_PATH="/mnt/c/_SuperfluidACE/SuperfluidACE-CodexC/codex-cli/bin/node_modules:/mnt/c/_SuperfluidACE/SuperfluidACE-CodexC/codex-cli/node_modules:/mnt/c/_SuperfluidACE/SuperfluidACE-CodexC/node_modules:/mnt/c/_SuperfluidACE/node_modules:/mnt/c/node_modules:/mnt/node_modules:/node_modules:/mnt/c/_SuperfluidACE/SuperfluidACE-CodexC/codex-cli/.wsl-global/pnpm/global/5/.pnpm/node_modules"
+else
+  export NODE_PATH="/mnt/c/_SuperfluidACE/SuperfluidACE-CodexC/codex-cli/bin/node_modules:/mnt/c/_SuperfluidACE/SuperfluidACE-CodexC/codex-cli/node_modules:/mnt/c/_SuperfluidACE/SuperfluidACE-CodexC/node_modules:/mnt/c/_SuperfluidACE/node_modules:/mnt/c/node_modules:/mnt/node_modules:/node_modules:/mnt/c/_SuperfluidACE/SuperfluidACE-CodexC/codex-cli/.wsl-global/pnpm/global/5/.pnpm/node_modules:$NODE_PATH"
+fi
+if [ -x "$basedir/node" ]; then
+  exec "$basedir/node"  "$basedir/../../bin/codex.js" "$@"
+else
+  exec node  "$basedir/../../bin/codex.js" "$@"
+fi

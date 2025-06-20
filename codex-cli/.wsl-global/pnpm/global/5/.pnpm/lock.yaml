@@ -1,0 +1,16 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+overrides:
+  '@openai/codex': link:../../../..
+
+importers:
+
+  .:
+    dependencies:
+      '@openai/codex':
+        specifier: link:../../../..
+        version: link:../../../..

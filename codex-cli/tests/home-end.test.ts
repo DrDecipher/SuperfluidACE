@@ -31,6 +31,14 @@ describe('TextBuffer – Home/End navigation', () => {
     expect(tb.getCursor()).toEqual([0, 5]);
   });
 
+  it('CSI sequences with leading ESC also work', () => {
+    const tb = new TextBuffer('abc', 2);
+    tb.handleInput('\u001b[H', {} as any, vp());
+    expect(tb.getCursor()).toEqual([0, 0]);
+    tb.handleInput('\u001b[F', {} as any, vp());
+    expect(tb.getCursor()).toEqual([0, 3]);
+  });
+
   it('Shift+Home selects text to start', () => {
     const tb = new TextBuffer('hello', 3); // caret after "hel"
 

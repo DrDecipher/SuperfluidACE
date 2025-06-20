@@ -53,6 +53,7 @@
     "zod": "^3.24.3"
   },
   "devDependencies": {
+    "@esbuild/linux-x64": "^0.25.5",
     "@eslint/js": "^9.22.0",
     "@types/diff": "^7.0.2",
     "@types/express": "^5.0.1",
