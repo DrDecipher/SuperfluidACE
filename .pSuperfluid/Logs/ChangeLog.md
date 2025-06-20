@@ -27,3 +27,4 @@
 2025-06-19T23:31Z | codex-cli/tests/home-end.test.ts : all | Added unit tests for Home/End navigation and selection.
 2025-06-19T23:31Z | docs/keybindings.md : new | Documented Home/End keyboard shortcuts.
 2025-06-19T23:45Z | multiline-editor.tsx & text-buffer.ts : Home/End fallback | Added explicit CSI sequence handling for Home/End + Shift variants.
+2025-06-19T23:59Z | .pSuperfluid/Features/sessionResume.md : overwrite | Saved session state for Feature 003.
